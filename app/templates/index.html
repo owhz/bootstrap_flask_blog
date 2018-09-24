@@ -1,0 +1,22 @@
+{% extends "_layout.html" %}
+{% import "_macros.html" as macros %}
+
+
+{% block page_content %}
+    <div class="row">
+        <div class="col-md-8">
+            {% include "_posts.html" %}
+            {{ macros.show_pagination('main.index', pagination=pagination) }}
+        </div>
+        <div class="col-md-3">
+            {% include "_sidebar.html" %}
+        </div>
+    </div>
+
+{% endblock %}
+
+
+{% block scripts %}
+    {{ super() }}
+    <script src="{{ url_for('static', filename='js/index.js') }}" type="text/javascript"></script>
+{% endblock %}

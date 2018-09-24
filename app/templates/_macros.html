@@ -1,0 +1,28 @@
+{% macro show_pagination(endpoint, pagination) %}
+    {% if pagination and pagination.total > 0 %}
+        <nav class="pagination">
+            <div class="nav-links">
+                <a class="prev {{ 'disabled' if not pagination.has_prev else '' }}"
+                   href="{{ url_for(endpoint, page=pagination.page-1, **kwargs) }}"><i class="icon-arrow-left"></i>Prev</a>
+                {% for page in pagination.iter_pages() %}
+                    {% if page %}
+                        {% if page != pagination.page %}
+                            <a href="{{ url_for(endpoint, page=page, **kwargs) }}">{{ page }}</a>
+                        {% else %}
+                            <a href="" class="current">{{ page }}</a>
+                        {% endif %}
+                    {% else %}
+                        <span class="dots">…</span>
+                    {% endif %}
+                {% endfor %}
+                <a class="next {{ 'disabled' if not pagination.has_next else '' }}"
+                   href="{{ url_for(endpoint, page=pagination.page+1, **kwargs) }}">Next<i class="icon-arrow-right"></i></a>
+            </div>
+        </nav>
+    {% endif %}
+{% endmacro %}
+
+
+{% macro show_scroll_to_top_button() %}
+{% endmacro %}
+

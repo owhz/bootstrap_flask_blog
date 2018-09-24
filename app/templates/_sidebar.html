@@ -1,0 +1,28 @@
+<aside class="sidebar">
+    <section class="widget widget-categories">
+        <h3 class="widget-title">Categories</h3>
+        <ul>
+            {% for category in categories %}
+                <li>
+                    <a class="{{ 'current' if category_id and category_id == category.id else '' }}" href="{{ url_for('main.index', category_id=category.id) }}">{{ category.name }}<span class="count">{{ category.posts.count() }}</span></a>
+                </li>
+            {% endfor %}
+        </ul>
+    </section>
+    <section class="widget widget-tags">
+        <h3 class="widget-title">Tags</h3>
+        {% for tag in tags %}
+            <a class="tag-link {{ 'current' if tag_id and tag_id == tag.id else '' }}" href="{{ url_for('main.index', tag_id=tag.id) }}">{{ tag.name }}<span>{{ tag.posts.count() }}</span></a>
+        {% endfor %}
+    </section>
+    <section class="widget widget-archives">
+        <h3 class="widget-title">Archives</h3>
+        <ul>
+            {% for archive in archives %}
+                <li>
+                    <a class="{{ 'current' if archive_date and archive_date == archive[0] }}" href="{{ url_for('main.index', archive_date=archive[0]) }}">{{ archive[0] }}<span class="count">{{ archive[1] }}</span></a>
+                </li>
+            {% endfor %}
+        </ul>
+    </section>
+</aside>

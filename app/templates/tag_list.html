@@ -1,0 +1,21 @@
+{% extends "_layout.html" %}
+
+
+{% block page_content %}
+    <div style="margin-bottom: 10px;">
+        <a class="btn btn-sm btn-default" href="{{ url_for('main.new_tag') }}">Add</a>
+    </div>
+    <ul class="list-group">
+        {% for tag in tags %}
+            <li class="list-group-item">
+                {{ tag.name }}
+                <div style="float: right; width: 104px;">
+                    <a class="btn btn-sm btn-default" href="{{ url_for('main.edit_tag', id=tag.id) }}">Edit</a>
+                    {% if tag.posts.count() == 0 %}
+                        <a class="btn btn-sm btn-danger" href="{{ url_for('main.delete_tag', id=tag.id) }}">Delete</a>
+                    {% endif %}
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
