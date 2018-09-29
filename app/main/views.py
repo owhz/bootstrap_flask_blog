@@ -122,7 +122,8 @@ def edit_post(id):
         return redirect(url_for('main.index'))
     form.title.data = post.title
     form.body.data = post.body
-    form.category.data = post.category.id
+    if post.category:
+        form.category.data = post.category.id
     form.tags.data = [tag.id for tag in post.tags]
     if post.is_public is None:
         form.is_public = True

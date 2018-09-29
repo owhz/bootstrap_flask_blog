@@ -17,8 +17,7 @@ class Config:
 
 
 class ProductionConfig(Config):
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URI') \
-                                or 'sqlite:///{0}'.format(os.path.join(basedir, 'data.sqlite'))
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URI')
 
     @classmethod
     def init_app(cls, app):
@@ -42,7 +41,7 @@ class UnixConfig(ProductionConfig):
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_ECHO = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///{0}'.format(os.path.join(basedir, 'data-dev.sqlite'))
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:root@localhost/bootstrap_blog'
 
 
 class TestingConfig(Config):
