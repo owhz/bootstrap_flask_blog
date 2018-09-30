@@ -1,7 +1,10 @@
 $(function () {
     var simplemde = new SimpleMDE({
         showIcons: ["code", "table"],
-        renderingConfig: true
+        renderingConfig: {
+            codeSyntaxHighlighting: true
+        },
+        spellChecker: false
     });
     $('#tags').multiselect();
     $('#category').multiselect();

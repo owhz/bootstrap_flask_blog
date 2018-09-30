@@ -2,8 +2,7 @@ import hashlib
 from datetime import datetime
 
 import bleach
-from markdown import markdown
-from markdown.extensions.codehilite import CodeHiliteExtension
+from markdown2 import markdown
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, AnonymousUserMixin
 
@@ -81,9 +80,10 @@ class Post(db.Model):
     @staticmethod
     def on_body_change(target, value, oldvalue, initiator):
         allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code', 'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
-                        'h1', 'h2', 'h3', 'p']
+                        'h1', 'h2', 'h3', 'h4', 'h5' 'p']
         target.body_html = bleach.linkify(bleach.clean(
-            markdown(value, extensions=['fenced_code', 'codehilite'], output_format='html'),
+            # markdown(value, extensions=['fenced_code', 'codehilite'], output_format='html5'),
+            markdown(value, extras=['fenced-code-blocks']),
             tags=allowed_tags, strip=True))
 
 
