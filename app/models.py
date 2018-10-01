@@ -79,12 +79,13 @@ class Post(db.Model):
 
     @staticmethod
     def on_body_change(target, value, oldvalue, initiator):
-        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code', 'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
-                        'h1', 'h2', 'h3', 'h4', 'h5' 'p']
-        target.body_html = bleach.linkify(bleach.clean(
-            # markdown(value, extensions=['fenced_code', 'codehilite'], output_format='html5'),
-            markdown(value, extras=['fenced-code-blocks']),
-            tags=allowed_tags, strip=True))
+        # allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code', 'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
+        #                 'h1', 'h2', 'h3', 'h4', 'h5' 'p']
+        # target.body_html = bleach.linkify(bleach.clean(
+        #     # markdown(value, extensions=['fenced_code', 'codehilite'], output_format='html5'),
+        #     markdown(value, extras=['fenced-code-blocks']),
+        #     tags=allowed_tags, strip=True))
+        target.body_html = markdown(value, extras=['fenced-code-blocks'])
 
 
 class AnonymousUser(AnonymousUserMixin):
