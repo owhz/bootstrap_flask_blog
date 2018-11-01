@@ -50,8 +50,8 @@
         {% for message in get_flashed_messages() %}
             <div class="alert alert-warning alert-dismissable" role="alert">
                 <button type="button" class="close" data-dismiss="alert">
-                    <span aria-hidden="true">&times;</span></button>
-                {{ message }}
+                    <span aria-hidden="true">&times;</span>
+                    {{ message }}
                 </button>
             </div>
         {% endfor %}
