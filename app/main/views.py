@@ -62,7 +62,7 @@ def index():
 @main.route('/post/<int:id>')
 def post(id):
     post = Post.query.get_or_404(id)
-    return render_template('single_post.html', post=post)
+    return render_template('article/post/post_single.html', post=post)
 
 
 @main.route('/post/new', methods=['GET', 'POST'])
@@ -89,7 +89,7 @@ def new_post():
         db.session.commit()
         flash('A new post has been created.')
         return redirect(url_for('main.index'))
-    return render_template('post_edit.html', form=form)
+    return render_template('article/post/post_edit.html', form=form)
 
 
 @main.route('/post/edit/<int:id>', methods=['GET', 'POST'])
@@ -123,13 +123,13 @@ def edit_post(id):
     form.title.data = post.title
     form.body.data = post.body
     if post.category:
-        form.category.data = post.category.id
+        form.category.data = [post.category.id]
     form.tags.data = [tag.id for tag in post.tags]
     if post.is_public is None:
         form.is_public = True
     else:
         form.is_public.data = int(post.is_public)
-    return render_template('post_edit.html', form=form)
+    return render_template('article/post/post_edit.html', form=form)
 
 
 @main.route('/post/delete/<int:id>')
@@ -146,7 +146,7 @@ def delete_post(id):
 @login_required
 def list_tag():
     tags = Tag.query.all()
-    return render_template('tag_list.html', tags=tags)
+    return render_template('article/tag/tag_list.html', tags=tags)
 
 
 @main.route('/tag/new', methods=['GET', 'POST'])
@@ -159,7 +159,7 @@ def new_tag():
         db.session.commit()
         flash('A new tag has been created.')
         return redirect(url_for('main.list_tag'))
-    return render_template('tag_edit.html', form=form)
+    return render_template('article/tag/tag_edit.html', form=form)
 
 
 @main.route('/tag/delete/<int:id>')
@@ -187,14 +187,14 @@ def edit_tag(id):
         flash('The tag has been updated.')
         return redirect(url_for('main.list_tag'))
     form.name.data = tag.name
-    return render_template('tag_edit.html', form=form)
+    return render_template('article/tag/tag_edit.html', form=form)
 
 
 @main.route('/category/list')
 @login_required
 def list_category():
     categories = Category.query.all()
-    return render_template('category_list.html', categories=categories)
+    return render_template('article/category/category_list.html', categories=categories)
 
 
 @main.route('/category/edit/<int:id>', methods=['GET', 'POST'])
@@ -209,7 +209,7 @@ def edit_category(id):
         flash('The category has been updated.')
         return redirect(url_for('main.list_category'))
     form.name.data = category.name
-    return render_template('category_edit.html', form=form)
+    return render_template('article/category/category_edit.html', form=form)
 
 
 @main.route('/category/new', methods=['GET', 'POST'])
@@ -223,7 +223,7 @@ def new_category():
         db.session.commit()
         flash('A new category has been created.')
         return redirect(url_for('main.list_category'))
-    return render_template('category_edit.html', form=form)
+    return render_template('article/category/category_edit.html', form=form)
 
 
 @main.route('/category/delete/<int:id>')

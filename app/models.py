@@ -15,14 +15,22 @@ post_tags = db.Table('post_tags', db.Model.metadata,
 
 
 class Category(db.Model):
+    """
+    目录
+    """
     __tablename__ = 'categories'
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True, index=True)
     posts = db.relationship('Post', backref='category', lazy='dynamic')
 
 
 class Tag(db.Model):
+    """
+    标签
+    """
     __tablename__ = 'tags'
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(25), unique=True, index=True)
     posts = db.relationship('Post', secondary=post_tags,
@@ -31,7 +39,11 @@ class Tag(db.Model):
 
 
 class User(UserMixin, db.Model):
+    """
+    用户
+    """
     __tablename__ = 'users'
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), nullable=True)
     username = db.Column(db.String(64), unique=True, index=True)
@@ -62,7 +74,11 @@ class User(UserMixin, db.Model):
 
 
 class Post(db.Model):
+    """
+    文章
+    """
     __tablename__ = 'posts'
+
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(64))
     body = db.Column(db.Text)
@@ -85,7 +101,7 @@ class Post(db.Model):
         #     # markdown(value, extensions=['fenced_code', 'codehilite'], output_format='html5'),
         #     markdown(value, extras=['fenced-code-blocks']),
         #     tags=allowed_tags, strip=True))
-        target.body_html = markdown(value, extras=['fenced-code-blocks'])
+        target.body_html = markdown(value, extras=['fenced-code-blocks', 'nl2br'])
 
 
 class AnonymousUser(AnonymousUserMixin):

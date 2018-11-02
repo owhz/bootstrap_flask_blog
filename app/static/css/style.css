@@ -106,7 +106,7 @@ body {
     border-color: #ff3366;
     padding: 0 25px;
     line-height: 36px;
-    height: 36px;
+    /*height: 36px;*/
 }
 
 a.button-ghost:hover {
@@ -284,7 +284,7 @@ a.button-ghost:hover {
 }
 
 .widget-categories > ul li a .count {
-    height: 20px;
+    /*height: 20px;*/
     line-height: 20px;
     border-radius: 10px;
     color: #3d4652;
@@ -308,7 +308,7 @@ a.button-ghost:hover {
 
 .widget-tags a {
     display: inline-block;
-    height: 30px;
+    /*height: 30px;*/
     line-height: 30px;
     color: #3d4652;
     text-decoration: none;
@@ -332,7 +332,7 @@ a.button-ghost:hover {
     display: inline-block;
     background-color: #eee;
     border-radius: 10px;
-    height: 20px;
+    /*height: 20px;*/
     line-height: 20px;
     padding: 1px 6px;
     margin-left: 5px;
@@ -364,7 +364,7 @@ a.button-ghost:hover {
 }
 
 .widget-archives > ul li a .count {
-    height: 20px;
+    /*height: 20px;*/
     line-height: 20px;
     border-radius: 10px;
     color: #3d4652;

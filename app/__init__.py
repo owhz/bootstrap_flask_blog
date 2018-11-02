@@ -19,6 +19,11 @@ loginmanager.login_view = 'auth.login'
 
 
 def create_app(config_name):
+    """
+    factory function used for creating app
+    :param config_name:
+    :return:
+    """
     app = Flask(__name__)
     config_obj = config[config_name]
     app.config.from_object(config_obj)
@@ -35,5 +40,8 @@ def create_app(config_name):
 
     from .auth import auth
     app.register_blueprint(auth, url_prefix='/auth')
+
+    from .user import user
+    app.register_blueprint(user, url_prefix='/user')
 
     return app

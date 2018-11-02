@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 
 from wtforms import StringField, SubmitField, RadioField, SelectMultipleField, SelectField
-from wtforms.validators import Length, DataRequired
+from wtforms.validators import Length, DataRequired, Optional
 
 from app.flask_simplemde.fields import SimpleMDEField
 from app.models import Tag, Category

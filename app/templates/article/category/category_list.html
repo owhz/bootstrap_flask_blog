@@ -8,12 +8,12 @@
     <ul class="list-group">
         {% for category in categories %}
             <li class="list-group-item">
-                {{ category.name }}
-                <div style="float: right; width: 104px;">
-                    <a class="btn btn-sm btn-default" href="{{ url_for('main.edit_category', id=category.id) }}">Edit</a>
+                <span>{{ category.name }}</span>
+                <div style="float: right;display: inline-block;top: -5px;position: relative;">
                     {% if category.posts.count() == 0 %}
                         <a class="btn btn-sm btn-danger" href="{{ url_for('main.delete_category', id=category.id) }}">Delete</a>
                     {% endif %}
+                    <a class="btn btn-sm btn-default"  href="{{ url_for('main.edit_category', id=category.id) }}">Edit</a>
                 </div>
             </li>
         {% endfor %}

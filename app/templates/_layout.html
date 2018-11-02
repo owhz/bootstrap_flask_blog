@@ -25,7 +25,7 @@
                 <ul class="nav navbar-nav navbar-right">
                     {% if current_user.is_authenticated %}
                         <li>
-                            <a class="drown-toggle" data-toggle="dropdown" href="{{ url_for('main.new_post') }}">Post
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="{{ url_for('main.new_post') }}">Post
                                 <span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li><a href="{{ url_for('main.new_post') }}">New Post</a></li>
@@ -34,7 +34,12 @@
                                 <li><a href="{{ url_for('main.list_category') }}">Categories</a></li>
                             </ul>
                         </li>
-                        <li><a href="{{ url_for('auth.logout') }}">Log Out</a></li>
+                        <li>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="">{{ current_user.username }} <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{{ url_for('auth.logout') }}">Log Out</a></li>
+                            </ul>
+                        </li>
                     {% else %}
                         <li><a href="{{ url_for('auth.login') }}">Log In</a></li>
                     {% endif %}
@@ -51,11 +56,12 @@
             <div class="alert alert-warning alert-dismissable" role="alert">
                 <button type="button" class="close" data-dismiss="alert">
                     <span aria-hidden="true">&times;</span>
-                    {{ message }}
                 </button>
+                {{ message }}
             </div>
         {% endfor %}
         {% block page_content %}
+            <!-- page_content !-->
         {% endblock %}
     </div>
 {% endblock %}
@@ -67,5 +73,6 @@
     <script type="text/javascript" src="{{ url_for('static', filename='js/vendor/bootstrap-multiselect.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/vendor/highlight.pack.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/vendor/bootbox.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/vendor/marked.js') }}"></script>
     <script>hljs.initHighlightingOnLoad();</script>
 {% endblock %}
