@@ -101,7 +101,7 @@ class Post(db.Model):
         #     # markdown(value, extensions=['fenced_code', 'codehilite'], output_format='html5'),
         #     markdown(value, extras=['fenced-code-blocks']),
         #     tags=allowed_tags, strip=True))
-        target.body_html = markdown(value, extras=['fenced-code-blocks', 'nl2br'])
+        target.body_html = markdown(value, extras=['fenced-code-blocks', 'nl2br', 'tables'])
 
 
 class AnonymousUser(AnonymousUserMixin):
