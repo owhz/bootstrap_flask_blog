@@ -1,0 +1,14 @@
+FROM python:3.7.1
+
+RUN pip3 install gunicorn
+
+WORKDIR /usr/src/app
+
+COPY ./requirements.txt ../
+COPY . .
+
+RUN pip3 install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+CMD gunicorn -b 0.0.0.0:5000 --access-logfile - --error-logfile - blog:app
+
+EXPOSE 5000

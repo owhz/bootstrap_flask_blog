@@ -1,0 +1,30 @@
+version: '3.7'
+services:
+    web:
+        build:
+            context: .
+            dockerfile: ./dockerfiles/web_dockerfile
+        ports:
+            - 5000:5000
+        # container_name: blog_container
+        volumes:
+            - type: volume 
+              source: source_vol
+              target: /usr/src/app
+        depends_on:
+            - db 
+            - nginx
+    db:
+        image: mariadb
+        # container_name: mysql_container 
+        environment:
+            - MYSQL_ROOT_PASSWORD=my-secret-pw
+        volumes:
+            - type: volume 
+              source: db_data_vol
+              target: /var/lib/mysql
+    nginx:
+        image: nginx
+volumes:
+    source_vol:
+    db_data_vol:
