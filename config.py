@@ -41,7 +41,7 @@ class UnixConfig(ProductionConfig):
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_ECHO = True
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:root@localhost/bootstrap_blog'
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:root@localhost/db'
 
 
 class TestingConfig(Config):
