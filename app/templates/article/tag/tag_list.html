@@ -9,11 +9,11 @@
         {% for tag in tags %}
             <li class="list-group-item">
                 {{ tag.name }}
-                <div style="float: right; width: 104px;">
-                    <a class="btn btn-sm btn-default" href="{{ url_for('main.edit_tag', id=tag.id) }}">Edit</a>
+                <div style="float: right;display: inline-block;top: -5px;position: relative;">
                     {% if tag.posts.count() == 0 %}
                         <a class="btn btn-sm btn-danger" href="{{ url_for('main.delete_tag', id=tag.id) }}">Delete</a>
                     {% endif %}
+                    <a class="btn btn-sm btn-default" href="{{ url_for('main.edit_tag', id=tag.id) }}">Edit</a>
                 </div>
             </li>
         {% endfor %}

@@ -7,6 +7,9 @@ services:
         ports:
             - 5000:5000
         # container_name: blog_container
+        environment:
+          - FLASK_APP:blog.py
+          - FLASK_ENV:production
         volumes:
             - type: volume 
               source: source_vol
