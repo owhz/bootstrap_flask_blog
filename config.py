@@ -28,16 +28,6 @@ class ProductionConfig(Config):
         app.logger.addHandler(logger_handler)
 
 
-class UnixConfig(ProductionConfig):
-    @classmethod
-    def init_app(cls, app):
-        import logging
-        from logging.handlers import SysLogHandler
-        logger_handler = SysLogHandler()
-        logger_handler.setLevel(logging.WARNING)
-        app.logger.addHandler(logger_handler)
-
-
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_ECHO = True
@@ -51,6 +41,5 @@ class TestingConfig(Config):
 config = {
     'production': ProductionConfig,
     'development': DevelopmentConfig,
-    'unix': UnixConfig,
     'default': DevelopmentConfig
 }

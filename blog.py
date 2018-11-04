@@ -31,7 +31,7 @@ def test():
 
 
 @app.cli.command()
-def deploy():
+def init_amdin_user():
     upgrade()
     db.create_all()
     user = User.query.filter_by(email=current_app.config['BLOG_ADMIN_EMAIL']).first()

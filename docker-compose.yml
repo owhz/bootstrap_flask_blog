@@ -21,7 +21,8 @@ services:
         ports:
             - 3306:3306
         environment:
-            - MYSQL_ROOT_PASSWORD=my-secret-pw
+            - MYSQL_ROOT_PASSWORD=root
+            - MYSQL_DATABASE=blog
         volumes:
             - type: volume 
               source: db_data_vol
@@ -37,4 +38,5 @@ services:
             - web
 volumes:
     source_vol:
+        external: true
     db_data_vol:
