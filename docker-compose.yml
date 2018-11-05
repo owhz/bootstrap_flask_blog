@@ -16,9 +16,10 @@ services:
           - BLOG_ADMIN_PASSWORD:admin
           - MYSQL_ROOT_PASSWORD=root
         volumes:
-            - type: volume 
-              source: source_vol
-              target: /usr/src/app
+            - ./:/usr/src/app
+            # - type: volume 
+            #   source: source_vol
+            #   target: /usr/src/app
         depends_on:
             - db 
         links:
@@ -49,6 +50,6 @@ services:
         links:
             - web
 volumes:
-    source_vol:
-        external: true
+    # source_vol:
+    #     external: true
     db_data_vol:
