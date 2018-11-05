@@ -19,7 +19,7 @@ class Config:
 
 
 class ProductionConfig(Config):
-    DATABASE_PASSWORD  = os.environ['DATABASE_PASSWORD']
+    DATABASE_PASSWORD  = os.environ.get('DATABASE_PASSWORD')
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:%s@db/blog' % DATABASE_PASSWORD
 
     @classmethod

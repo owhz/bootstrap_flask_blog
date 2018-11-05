@@ -7,15 +7,13 @@ from flask_moment import Moment
 from .flask_simplemde import SimpleMDE
 from config import config
 
-
 db = SQLAlchemy()
 moment = Moment()
 bootstrap = Bootstrap()
-loginmanager = LoginManager()
-simplemde = SimpleMDE()
+login_manager = LoginManager()
+simple_mde = SimpleMDE()
 
-
-loginmanager.login_view = 'auth.login'
+login_manager.login_view = 'auth.login'
 
 
 def create_app(config_name):
@@ -32,8 +30,8 @@ def create_app(config_name):
     db.init_app(app)
     moment.init_app(app)
     bootstrap.init_app(app)
-    loginmanager.init_app(app)
-    simplemde.init_app(app)
+    login_manager.init_app(app)
+    simple_mde.init_app(app)
 
     from .main import main
     app.register_blueprint(main)

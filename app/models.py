@@ -6,7 +6,7 @@ from markdown2 import markdown
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, AnonymousUserMixin
 
-from . import db, loginmanager
+from . import db, login_manager
 
 post_tags = db.Table('post_tags', db.Model.metadata,
                      db.Column('tag_id', db.Integer, db.ForeignKey('tags.id')),
@@ -108,11 +108,11 @@ class AnonymousUser(AnonymousUserMixin):
     pass
 
 
-@loginmanager.user_loader
+@login_manager.user_loader
 def load_user(id):
     return User.query.get(id)
 
 
-loginmanager.anonymous_user = AnonymousUser
+login_manager.anonymous_user = AnonymousUser
 
 db.event.listen(Post.body, 'set', Post.on_body_change)
