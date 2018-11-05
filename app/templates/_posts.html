@@ -8,7 +8,7 @@
             </div>
             <h3 class="post-title"><a href="{{ url_for('main.post', id=post.id) }}">{{ post.title }}</a></h3>
             <div>
-                <p>{{ post.body_html | safe | striptags }}</p>
+                <p class="preview">{{ post.body_html | safe | striptags }}</p>
             </div>
             <div class="post-meta">
                 <span class="post-author"><a href="{{ url_for('main.index') }}">{{ post.user.username }}</a></span>

@@ -214,8 +214,11 @@ a.button-ghost:hover {
 }
 
 .post-tile .post-body p {
-    /*margin: 0 0 24px;*/
     color: #808080;
+}
+
+.post-tile .post-body p .preview{
+    /*margin: 0 0 24px;*/
     /*line-height: 1.5;*/
     /*font-size: 14px;*/
     -webkit-line-clamp: 3;
