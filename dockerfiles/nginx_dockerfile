@@ -3,6 +3,6 @@ FROM ubuntu:18.04
 ARG http2=no
 
 RUN apt-get update -y && apt-get install nginx -y
-RUN if [ ${http2} = 'yes' ]; then apt-get install software-properties-common -y && add-apt-repository ppa:certbot/certbot -y && apt-get update -y && apt-get install python-certbot-nginx -y; fi
+RUN if [ ${http2} = 'yes' ]; then apt-get install software-properties-common -y && add-apt-repository ppa:certbot/certbot -y && apt-get update -y && apt-get install python-certbot-nginx -y && apt-get install wget -y; fi
 
-CMD nginx -g daemon off
+CMD nginx -g "daemon off;"

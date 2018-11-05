@@ -10,6 +10,11 @@ services:
         environment:
           - FLASK_APP:blog.py
           - FLASK_ENV:production
+          - BLOG_ADMIN_EMAIL:admin@admin.com
+          - BLOG_ADMIN_USERNAME:admin
+          - BLOG_ADMIN_NAME:admin
+          - BLOG_ADMIN_PASSWORD:admin
+          - MYSQL_ROOT_PASSWORD=root
         volumes:
             - type: volume 
               source: source_vol

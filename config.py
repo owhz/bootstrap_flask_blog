@@ -8,10 +8,10 @@ class Config:
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    BLOG_ADMIN_EMAIL = 'admin@admin.com'
-    BLOG_ADMIN_USERNAME = 'admin'
-    BLOG_ADMIN_NAME = 'admin'
-    BLOG_ADMIN_PASSWORD = 'admin'
+    BLOG_ADMIN_EMAIL = os.environ.get('BLOG_ADMIN_EMAIL') or 'admin@admin.com'
+    BLOG_ADMIN_USERNAME = os.environ.get('BLOG_ADMIN_USERNAME') or 'admin'
+    BLOG_ADMIN_NAME = os.environ.get('BLOG_ADMIN_NAME') or 'admin'
+    BLOG_ADMIN_PASSWORD = os.environ.get('BLOG_ADMIN_PASSWORD') or 'admin'
 
     @classmethod
     def init_app(cls, app):
@@ -19,7 +19,8 @@ class Config:
 
 
 class ProductionConfig(Config):
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:root@localhost/blog'
+    DATABASE_PASSWORD  = os.environ['DATABASE_PASSWORD']
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:%s@db/blog' % DATABASE_PASSWORD
 
     @classmethod
     def init_app(cls, app):
