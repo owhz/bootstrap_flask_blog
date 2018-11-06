@@ -42,4 +42,7 @@ def create_app(config_name):
     from .user import user
     app.register_blueprint(user, url_prefix='/user')
 
+    from .api import api
+    app.register_blueprint(api, url_prefix='/api')
+
     return app
