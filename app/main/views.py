@@ -61,7 +61,10 @@ def index():
 
 @main.route('/post/<int:id>')
 def post(id):
-    post = Post.query.get_or_404(id)
+    query = Post.query
+    if current_user.is_anonymous:
+        query = query.filter(Post.is_public == True)
+    post = query.get_or_404(id)
     return render_template('article/post/post_single.html', post=post)
 
 
@@ -95,7 +98,7 @@ def new_post():
 @main.route('/post/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_post(id):
-    post = Post.query.get_or_404(id)
+    post = Post.filter.query.get_or_404(id)
     form = PostEditForm()
 
     if form.validate_on_submit():
