@@ -2,7 +2,7 @@ FROM python:3.7.1
 
 RUN pip3 install gunicorn
 RUN apt-get update -y
-RUN apt-get install nodejs npm -y
+RUN apt-get install nodejs -y
 RUN npm install marked -g
 
 WORKDIR /usr/src/app
