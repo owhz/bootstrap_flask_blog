@@ -2,6 +2,7 @@ FROM python:3.7.1
 
 RUN pip3 install gunicorn
 RUN apt-get update -y
+RUN curl -sL https://deb.nodesource.com/setup_11.x | bash -
 RUN apt-get install nodejs -y
 RUN npm install marked -g
 

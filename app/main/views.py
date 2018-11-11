@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask import render_template, request, flash, redirect, url_for, current_app
+from flask import render_template, request, flash, redirect, url_for, current_app, abort
 from flask_login import login_required, current_user
 from flask_sqlalchemy import get_debug_queries
 from sqlalchemy import func
@@ -64,7 +64,9 @@ def post(id):
     query = Post.query
     if current_user.is_anonymous:
         query = query.filter(Post.is_public == True)
-    post = query.get_or_404(id)
+    post = query.filter_by(id=id).first()
+    if not post:
+        abort(404)
     return render_template('article/post/post_single.html', post=post)
 
 
