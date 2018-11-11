@@ -98,7 +98,7 @@ def new_post():
 @main.route('/post/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_post(id):
-    post = Post.filter.query.get_or_404(id)
+    post = Post.query.get_or_404(id)
     form = PostEditForm()
 
     if form.validate_on_submit():

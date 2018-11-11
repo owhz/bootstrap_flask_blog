@@ -6,6 +6,7 @@ from markdown2 import markdown
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, AnonymousUserMixin
 
+from app import utils
 from . import db, login_manager
 
 post_tags = db.Table('post_tags', db.Model.metadata,
@@ -101,7 +102,9 @@ class Post(db.Model):
         #     # markdown(value, extensions=['fenced_code', 'codehilite'], output_format='html5'),
         #     markdown(value, extras=['fenced-code-blocks']),
         #     tags=allowed_tags, strip=True))
-        target.body_html = markdown(value, extras=['fenced-code-blocks', 'nl2br', 'tables'])
+
+        target.body_html = utils.convert_to_html(value)
+        #target.body_html = markdown(value, extras=['fenced-code-blocks', 'nl2br', 'tables'])
 
 
 class AnonymousUser(AnonymousUserMixin):

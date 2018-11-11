@@ -5,6 +5,9 @@ import redis
 from . import api
 
 
+redis = redis.Redis(host='host', port=6379)
+
+
 @api.route('/image', methods=['POST'])
 def upload_image():
     pass

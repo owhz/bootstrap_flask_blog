@@ -1,3 +1,5 @@
+import subprocess
+
 from datetime import tzinfo, timedelta
 
 
@@ -13,3 +15,9 @@ class UTC(tzinfo):
 
     def dst(self):
         return timedelta(self._offset)
+
+
+def convert_to_html(markdown):
+    p = subprocess.Popen(['echo', markdown], stdout=subprocess.PIPE)
+    out = subprocess.Popen(['marked'], stdin=p.stdout, stdout=subprocess.PIPE)
+    return out.stdout.read().decode('utf-8')
