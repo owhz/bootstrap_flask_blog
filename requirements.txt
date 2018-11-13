@@ -8,5 +8,5 @@ Flask-Moment==0.6.0
 Flask-SQLAlchemy==2.3.2
 Flask-WTF==0.14.2
 PyMySQL==0.9.2
-markdown2==2.3.6
 redis==2.10.6
+celery==4.2.1

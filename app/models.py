@@ -1,8 +1,6 @@
 import hashlib
 from datetime import datetime
 
-import bleach
-from markdown2 import markdown
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, AnonymousUserMixin
 
@@ -104,7 +102,14 @@ class Post(db.Model):
         #     tags=allowed_tags, strip=True))
 
         target.body_html = utils.convert_to_html(value)
-        #target.body_html = markdown(value, extras=['fenced-code-blocks', 'nl2br', 'tables'])
+
+
+class Comment:
+    __tablename__ = 'comments'
+
+
+class Follower:
+    __tablename__ = 'followers'
 
 
 class AnonymousUser(AnonymousUserMixin):
