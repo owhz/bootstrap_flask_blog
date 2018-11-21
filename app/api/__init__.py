@@ -10,6 +10,15 @@ MODULE_NAME_REGEX = re.compile(r'app\.api\.')
 api = Blueprint('api', __name__)
 
 
+@api.after_request
+def after_request(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = 'GET,POST,DELETE,OPTIONS,PUT'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+    response.headers['Access-Control-Max-Age'] = '1800'
+    return response
+
+
 class ApiViewType(type):
     def __new__(mcls, name, *bases, **attrs):
         return type.__new__(mcls, name, *bases, **attrs)
@@ -19,7 +28,8 @@ class ApiViewType(type):
 
 
 class ApiView(with_metaclass(ApiViewType, View)):
-    pass
+    def dispatch_request(self, *args, **kwargs):
+        pass
 
 
 def api_route(rule=None, **options):
@@ -45,4 +55,4 @@ def api_route(rule=None, **options):
     return decorator
 
 
-from . import auth, image, post, user
+from . import auth, image, post, user, tag, category
