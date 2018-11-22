@@ -11,8 +11,7 @@ def get_post_list():
     if category_id == 0:
         q = Post.query.filter(Post.is_public == True).all()
     else:
-        q = Category.query.get(category_id)
-        q = q.posts if q else []
+        q = Category.query.get(category_id).posts
     result = []
     if q:
         result = [{
