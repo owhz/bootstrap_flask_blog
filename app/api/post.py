@@ -1,4 +1,5 @@
-from flask import jsonify, request
+from flask import jsonify, request, abort
+from sqlalchemy import and_
 
 from app.models import Post, Category
 from . import api_route
@@ -8,7 +9,7 @@ from . import api_route
 def get_post_list():
     category_id = request.values.get('category_id', type=int)
     if category_id == 0:
-        q = Post.query.all()
+        q = Post.query.filter(Post.is_public == True).all()
     else:
         q = Category.query.get(category_id).posts
     result = []
@@ -22,7 +23,9 @@ def get_post_list():
 
 @api_route('/<int:id>', methods=['GET'])
 def get_post_by_id(id):
-    q = Post.query.get_or_404(id)
+    q = Post.query.filter(and_(Post.is_public == True,  Post.id == id)).first()
+    if not q:
+        abort(404)
     return jsonify({
         'title': q.title,
         'id': q.id,
