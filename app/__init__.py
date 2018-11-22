@@ -3,7 +3,6 @@ from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_moment import Moment
-from flask_cors import CORS
 
 from .flask_simplemde import SimpleMDE
 from config import config
@@ -13,7 +12,6 @@ moment = Moment()
 bootstrap = Bootstrap()
 login_manager = LoginManager()
 simple_mde = SimpleMDE()
-cors = CORS()
 
 login_manager.login_view = 'auth.login'
 
@@ -28,7 +26,6 @@ def create_app(config_name):
     config_obj = config[config_name]
     app.config.from_object(config_obj)
     config_obj.init_app(app)
-    cors.init_app(app, resources={r'/api/*': {'origins': '*'}})
 
     db.init_app(app)
     moment.init_app(app)
