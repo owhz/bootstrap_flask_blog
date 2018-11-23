@@ -1,6 +1,6 @@
 import re
 
-from flask import Blueprint
+from flask import Blueprint, current_app
 from flask._compat import with_metaclass
 
 from flask.views import View, MethodView
@@ -12,10 +12,10 @@ api = Blueprint('api', __name__)
 
 @api.after_request
 def after_request(response):
-    response.headers['Access-Control-Allow-Origin'] = '*'
-    response.headers['Access-Control-Allow-Methods'] = 'GET,POST,DELETE,OPTIONS,PUT'
-    response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
-    response.headers['Access-Control-Max-Age'] = '1800'
+    if current_app.config['ENV'] == 'development':
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.headers['Access-Control-Allow-Methods'] = 'GET,POST,DELETE,OPTIONS,PUT'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
     return response
 
 
