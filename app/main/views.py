@@ -6,6 +6,7 @@ from flask_sqlalchemy import get_debug_queries
 from sqlalchemy import func
 
 from app import db
+from app.service import article
 from . import main
 from .forms import PostEditForm, TagEditForm, CategoryEditForm
 from ..models import Tag, Category, Post
@@ -45,8 +46,7 @@ def index():
     pagination = query.paginate(page, per_page=10, error_out=False)
     posts = pagination.items
 
-    archives = Post.query.group_by(func.date_format(Post.timestamp, '%Y%m')).with_entities(
-        func.date_format(Post.timestamp, '%Y%m'), func.count('*')).all()
+    archives = article.get_archive_list_of_post()
 
     return render_template('index.html',
                            tags=tags,

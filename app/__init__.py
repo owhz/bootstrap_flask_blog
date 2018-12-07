@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_moment import Moment
 
+from .flask_redis import Redis
 from .flask_simplemde import SimpleMDE
 from config import config
 
@@ -11,7 +12,9 @@ db = SQLAlchemy()
 moment = Moment()
 bootstrap = Bootstrap()
 login_manager = LoginManager()
+
 simple_mde = SimpleMDE()
+redis = Redis()
 
 login_manager.login_view = 'auth.login'
 
@@ -22,6 +25,7 @@ def create_app(config_name):
     :param config_name:
     :return:
     """
+
     app = Flask(__name__)
     config_obj = config[config_name]
     app.config.from_object(config_obj)
@@ -31,7 +35,9 @@ def create_app(config_name):
     moment.init_app(app)
     bootstrap.init_app(app)
     login_manager.init_app(app)
+
     simple_mde.init_app(app)
+    redis.init_app(app)
 
     from .main import main
     app.register_blueprint(main)

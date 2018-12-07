@@ -5,8 +5,6 @@ from flask_migrate import Migrate, upgrade, current_app
 from app import create_app
 from app.models import db, User, Post
 
-flask_env = os.environ.get('FLASK_ENV')
-
 app = create_app(os.getenv('FLASK_ENV') or 'default')
 Migrate(app, db)
 

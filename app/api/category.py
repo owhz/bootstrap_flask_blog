@@ -1,13 +1,12 @@
 from flask import jsonify
 
 from . import api_route
-from app.models import Category
+
+from app.service import article
 
 
 @api_route('/list', methods=['GET'])
 def get_category_list():
-    result = [{
-        'name': i.name,
-        'id': i.id
-    } for i in Category.query.all()]
-    return jsonify(result)
+
+    result = article.fetch_category_list()
+    return jsonify([{ 'name': i.name, 'id': i.id } for i in result])
