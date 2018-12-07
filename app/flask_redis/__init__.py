@@ -1,6 +1,6 @@
 import time
 import uuid
-from functools import lru_cache
+
 from pickle import dumps as pickle_dumps
 from pickle import loads as pickle_loads
 
@@ -11,15 +11,28 @@ class FlaskRedisException(Exception):
     pass
 
 
-def _make_key(args, kwargs):
-    class A:
-        pass
+class _Hash:
 
+    __slots__ = 'hash_value'
+
+    def __init__(self, key):
+        self.hash_value = hash(key)
+
+    def __hash__(self):
+        return self.hash_value
+
+
+def _make_key(args, kwargs):
+    """
+    create hash key from args and kwargs
+    :param args:
+    :param kwargs:
+    :return:
+    """
     key = args
     key += kwargs.keys() + kwargs.values()
 
-    return A()
-
+    return _Hash(key)
 
 
 class Redis:
@@ -37,7 +50,7 @@ class Redis:
         # proxy self.redis
         return getattr(self.conn, item)
 
-    def hash_cache(self, key, field_finder, expiration=1800):
+    def hash_cache(self, key, field_finder=lambda x: x.id, expiration=3600 * 24):
         """
         cache hash data
         :param key: hash key
@@ -60,7 +73,7 @@ class Redis:
 
         return wrapper
 
-    def list_cache(self, expiration=1800):
+    def list_cache(self, expiration=3600 * 24):
         """
         cache list data
         :param expiration: expiration time in second
@@ -70,9 +83,22 @@ class Redis:
         def wrapper(func):
             def inner(*args, **kwargs):
                 data = self.func(*args, **kwargs)
-
+                return data
             return inner
 
+        return wrapper
+
+    def key_cache(self, expiration= 3600 * 24):
+        """
+
+        :param expiration:
+        :return:
+        """
+        def wrapper(func):
+            def inner(*args, **kwargs):
+                data = self.func(*args, **kwargs)
+                return data
+            return inner
         return wrapper
 
     def acquire_lock(self, lock_name, acquire_timeout=10):

@@ -1,10 +1,13 @@
+from pickle import dumps as pickle_dumps
+from pickle import loads as pickle_loads
+
 from sqlalchemy import func
 
 from app import redis
 from app.models import Category, Tag, Post
 
 
-@redis.hash_cache(key='category', field_finder=lambda x: x.id, expiration=3600 * 24)
+@redis.hash_cache(key='category')
 def fetch_category_list():
     """
     fetch category list
@@ -13,16 +16,32 @@ def fetch_category_list():
     return Category.query.all()
 
 
-@redis.hash_cache(key='post', field_finder=lambda x: x.id, expiration=3600 * 24)
+@redis.hash_cache(key='post')
+def fetch_post_list():
+    """
+    fetch post list
+    :return:
+    """
+    return Post.query.all()
+
+
 def fetch_post(post_id):
     """
     fetch post by id
     :param post_id:
     :return:
     """
-    return Post.query.filter(Post.id == post_id).first()
+    data = redis.hget('post', post_id)
+    if data:
+        return pickle_loads(data)
+
+    data = Post.query.filter(Post.id == post_id).first()
+    if data:
+        redis.hset('post', data.id, pickle_dumps(data))
+    return data
 
 
+@redis.hash_cache(key='tag')
 def get_tag_list():
     return Tag.query.all()
 
