@@ -15,7 +15,7 @@ services:
           - BLOG_ADMIN_NAME=admin
           - BLOG_ADMIN_PASSWORD=admin
           - DATABASE_PASSWORD=root
-          - REDIS_URI:redis://redis_password@redis:6379
+          - REDIS_URI=redis://:redis_password@redis:6379
         volumes:
             - ./:/usr/src/app/
             # - type: volume 
