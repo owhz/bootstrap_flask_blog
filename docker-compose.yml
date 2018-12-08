@@ -15,6 +15,7 @@ services:
           - BLOG_ADMIN_NAME=admin
           - BLOG_ADMIN_PASSWORD=admin
           - DATABASE_PASSWORD=root
+          - REDIS_URI:redis://redis_password@redis:6379
         volumes:
             - ./:/usr/src/app/
             # - type: volume 
@@ -28,7 +29,6 @@ services:
             - redis
     db:
         image: mariadb
-        # container_name: mysql_container 
         ports:
             - 3306:3306
         environment:
@@ -39,14 +39,17 @@ services:
               source: db_data_vol
               target: /var/lib/mysql/
     redis:
-        image: redis
+        build:
+          context: .
+          dockerfile: ./dockerfiles/redis_dockerfile
         ports:
             - 6379:6379
-            - ./config/redis.conf:/usr/local/etc/redis/redis.conf
         volumes:
+           - ./conf/redis.conf:/usr/local/etc/redis/redis.conf
            - type: volume
              source: redis_data_vol
              target: /var/lib/redis/
+
     nginx:
         build:
             context: .

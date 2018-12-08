@@ -1,0 +1,9 @@
+FROM ubuntu:18.04
+
+RUN apt-get update -y
+RUN apt-get install redis -y
+RUN mkdir -p /usr/local/etc/redis
+
+CMD redis-server /usr/local/etc/redis/redis.conf
+
+EXPOSE 6379

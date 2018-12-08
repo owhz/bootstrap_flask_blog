@@ -12,7 +12,6 @@ class FlaskRedisException(Exception):
 
 
 class _Hash:
-
     __slots__ = 'hash_value'
 
     def __init__(self, key):
@@ -50,10 +49,10 @@ class Redis:
         # proxy self.redis
         return getattr(self.conn, item)
 
-    def hash_cache(self, key, field_finder=lambda x: x.id, expiration=3600 * 24):
+    def hash_cache(self, key_name, field_finder=lambda x: x.id, expiration=3600 * 24):
         """
         cache hash data
-        :param key: hash key
+        :param key_name: hash key name
         :param field_finder: hash field
         :param expiration: expiration time in second
         :return:
@@ -61,13 +60,14 @@ class Redis:
 
         def wrapper(func):
             def inner(*args, **kwargs):
-                data = self.hgetall(key)
+                data = self.hvals(key_name)
                 if data:
-                    return [pickle_loads(item) for item in data.values()]
-                data = func(*args, **kwargs)
-                if data:
-                    self.hmset(key, {field_finder(item): pickle_dumps(item) for item in data})
-                return data
+                    return [pickle_loads(item) for item in data]
+                else:
+                    data = func(*args, **kwargs)
+                    if data:
+                        self.hmset(key_name, {field_finder(item): pickle_dumps(item) for item in data})
+                    return data
 
             return inner
 
@@ -84,22 +84,29 @@ class Redis:
             def inner(*args, **kwargs):
                 data = self.func(*args, **kwargs)
                 return data
+
             return inner
 
         return wrapper
 
-    def key_cache(self, expiration= 3600 * 24):
+    def key_cache(self, expiration=3600 * 24):
         """
 
         :param expiration:
         :return:
         """
+
         def wrapper(func):
             def inner(*args, **kwargs):
                 data = self.func(*args, **kwargs)
                 return data
+
             return inner
+
         return wrapper
+
+    # def pipeline_transaction(self):
+    #     return _PipelineTransaction(self.conn)
 
     def acquire_lock(self, lock_name, acquire_timeout=10):
         """

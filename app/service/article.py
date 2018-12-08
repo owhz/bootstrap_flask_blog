@@ -7,47 +7,63 @@ from app import redis
 from app.models import Category, Tag, Post
 
 
-@redis.hash_cache(key='category')
+@redis.hash_cache(key_name='category', expiration=None)
 def fetch_category_list():
     """
     fetch category list
     :return:
     """
-    return Category.query.all()
+    data = Category.query.all()
+
+    with redis.pipeline(True) as pipeline:
+        #pipeline.watch()
+        pipeline.multi()
+        for i in data:
+            ids = [j.id for j in i.posts]
+            if ids:
+                pipeline.sadd('category:%d:posts' % i.id, *ids)
+        pipeline.execute()
+    return data
 
 
-@redis.hash_cache(key='post')
+@redis.hash_cache(key_name='post', expiration=None)
 def fetch_post_list():
     """
     fetch post list
     :return:
     """
-    return Post.query.all()
+    data = Post.query.filter(Post.is_public == True).all()
+
+    with redis.pipeline(True) as pipeline:
+        #pipeline.watch()
+        pipeline.multi()
+        for i in data:
+            pipeline.sadd('post:%d:category' % i.id, i.category_id)
+        pipeline.execute()
+    return data
 
 
-def fetch_post(post_id):
+@redis.hash_cache(key_name='tag', expiration=None)
+def fetch_tag_list():
+    data = Tag.query.all()
+    return data
+
+
+def fetch_post(post_id, is_public):
     """
     fetch post by id
+    :param is_public:
     :param post_id:
     :return:
     """
     data = redis.hget('post', post_id)
     if data:
-        return pickle_loads(data)
-
-    data = Post.query.filter(Post.id == post_id).first()
-    if data:
-        redis.hset('post', data.id, pickle_dumps(data))
+        data = pickle_loads(data)
+    else:
+        data = Post.query.filter(Post.id == post_id, Post.is_public == is_public).first()
+        if data:
+            redis.hset('post', data.id, pickle_dumps(data))
     return data
-
-
-@redis.hash_cache(key='tag')
-def get_tag_list():
-    return Tag.query.all()
-
-
-def get_post_list_for_public():
-    return Post.query.all()
 
 
 def get_archive_list_of_post():
@@ -56,3 +72,16 @@ def get_archive_list_of_post():
     q = q.with_entities(func.date_format(Post.timestamp, '%Y%m'),
                         func.count('*'))
     return q.all()
+
+
+def fetch_post_list_of_category(category_id):
+    pass
+
+
+def fetch_category(category_id):
+    data = redis.hget('category', category_id)
+
+    if data:
+        return pickle_loads(data)
+    else:
+        pass
