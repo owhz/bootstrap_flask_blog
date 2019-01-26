@@ -1,9 +1,10 @@
 import os
 
-from flask_migrate import Migrate, upgrade, current_app
+from flask_migrate import Migrate, current_app, upgrade
 
 from app import create_app
-from app.models import db, User, Post
+from app.models import Post, User, db
+
 
 app = create_app(os.getenv('FLASK_ENV') or 'default')
 Migrate(app, db)

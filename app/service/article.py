@@ -3,8 +3,8 @@ from pickle import loads as pickle_loads
 
 from sqlalchemy import func
 
-from app import redis
-from app.models import Category, Tag, Post
+from app.extensions import redis
+from app.models import Category, Post, Tag
 
 
 @redis.hash_cache(key_name='category', expiration=None)

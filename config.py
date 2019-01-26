@@ -1,5 +1,6 @@
 import os
 
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
@@ -14,6 +15,8 @@ class Config:
     BLOG_ADMIN_USERNAME = os.environ.get('BLOG_ADMIN_USERNAME') or 'admin'
     BLOG_ADMIN_NAME = os.environ.get('BLOG_ADMIN_NAME') or 'admin'
     BLOG_ADMIN_PASSWORD = os.environ.get('BLOG_ADMIN_PASSWORD') or 'admin'
+
+    WEBPACK_MANIFEST_PATH = os.path.join(basedir, 'app/webpack/manifest.json')
 
     @classmethod
     def init_app(cls, app):
@@ -37,7 +40,7 @@ class ProductionConfig(Config):
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_ECHO = True
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:root@localhost/blog'
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:root@localhost/blog-dev'
 
     REDIS_URI = 'redis:@127.0.0.1'
 

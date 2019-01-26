@@ -1,64 +1,49 @@
-from random import randint, choices
+from random import randint
 
 from faker import Faker
-from flask import current_app
 
-from .models import db, User, Category, Tag, Post
+from app.extensions import db
+
+from .models import Category, Post, Role, Tag, User
+
 
 fake = Faker('zh_CN')
 
 
-def create_user():
-    user = User(email=current_app.config['BLOG_ADMIN_EMAIL'],
-                password=current_app.config['BLOG_ADMIN_PASSWORD'])
-    db.session.add(user)
-    db.session.commit()
-
-
-def create_tags(nums=100):
-    for i in range(1, randint(2, nums + 1)):
-        # t = Tag(name='标签%d' % fake.random_int(1, nums))
-        t = Tag(name='标签%d' % i)
+def create_tags(nums=20):
+    for _ in range(0, randint(1, nums + 1)):
+        name = 'Tag%d' % fake.random_int()
+        t = Tag.query.filter_by(name=name).first()
+        if not t:
+            t = Tag()
+            t.name = name
         db.session.add(t)
-    db.session.commit()
 
 
-def create_categories(nums=100):
-    for i in range(1, randint(2, nums + 1)):
-        # c = Category(name='目录%d' % fake.random_int(1, nums))
-        c = Category(name='目录%d' % i)
+def create_categories(nums=10):
+    for _ in range(0, randint(1, nums + 1)):
+        name = 'Category%d' % fake.random_int()
+        c = Category.query.filter_by(name=name).first()
+        if not c:
+            c = Category()
+            c.name = name
         db.session.add(c)
-    db.session.commit()
 
 
-def create_posts(nums=100):
-    if Tag.query.count() == 0:
-        create_tags()
+def create_posts(nums=20):
 
-    if Category.query.count() == 0:
-        create_categories()
+    user = User.query.filter(Role.name == 'Administrator').first()
 
-    u = User.query.filter_by(email=current_app.config['BLOG_ADMIN_EMAIL']).first()
-    if not u:
-        u = User(email=current_app.config['BLOG_ADMIN_EMAIL'],
-                 password=current_app.config['BLOG_ADMIN_PASSWORD'])
-
-    category_count = Category.query.count()
-
-    for i in range(1, nums):
-        tags = choices(Tag.query.all(), k=randint(0, 10))
-        category = Category.query.offset(randint(1, category_count + 1)).first()
-        p = Post(user=u,
-                 title='标题%d' % i,
-                 body=fake.text(),
-                 category=category)
-        p.tags.extend(tags)
+    for _ in range(nums):
+        p = Post(user=user,
+                 title='Title%d' % fake.random_int(),
+                 body=fake.text())
         db.session.add(p)
-    db.session.commit()
 
 
 def create_data():
-    create_user()
     create_tags()
-    create_categories()
     create_posts()
+    create_categories()
+
+    db.session.commit()
