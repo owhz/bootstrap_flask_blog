@@ -1,0 +1,40 @@
+{% extends "user/_base.html" %}
+
+{% block user_content %}
+    {% for item in g.user.followed %}
+        <div class="row">
+            <div class="col-md-12 user-content-item">
+                <div class="mr-auto" >
+                    <div class="profile">
+                        <a href="{@ url_for('.overview', username=item.followed.username) @}">
+                            <img src="{@ g.user.gravatar('40') @}">
+                            <div>{@ item.followed.username @}</div>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-sm btn-outline-info" @click="unfollow">Unfollow</button>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    {% for i in range(100) %}
+        {% for item in g.user.followed %}
+            <div class="row">
+                <div class="col-md-12 user-content-item">
+                    <div class="mr-auto" >
+                        <div class="profile">
+                            <a href="{@ url_for('.overview', username=item.followed.username) @}">
+                                <img src="{@ g.user.gravatar('40') @}">
+                                <div>{@ item.followed.username @}</div>
+                            </a>
+                        </div>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-sm btn-outline-info" @click="unfollow">Unfollow</button>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endfor %}
+{% endblock %}

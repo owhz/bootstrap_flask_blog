@@ -1,1 +1,1 @@
-{"assets":{"main.js":"main.js","vendor.js":"vendor.js"},"publicPath":"http://localhost:8080/static/build/"}
+{"assets":{"editPost.js":"editPost.js","main.js":"main.js","user.js":"user.js","vendor.js":"vendor.js"},"publicPath":"http://localhost:8080/static/build/"}

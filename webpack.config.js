@@ -4,6 +4,7 @@ const webpack = require("webpack");
 const CleanWebpackPlugin = require("clean-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const ManifestRevisionPlugin = require("manifest-revision-webpack-plugin");
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 const devMode = (process.env.NODE_ENV !== "production");
 const rootAssetPath = path.join(__dirname, "./assets/");
@@ -14,7 +15,9 @@ module.exports = function (env, args) {
     return {
         context: __dirname,
         entry: {
-            "main": ["./assets/js/main.js"]
+            "main": ["./assets/js/main.js"],
+            "editPost": "./assets/js/editPost.js",
+            "user": "./assets/js/user.js"
         },
         output: {
             path: buildPath,
@@ -39,11 +42,11 @@ module.exports = function (env, args) {
                     use: [devMode ? "style-loader" : MiniCssExtractPlugin.loader, "css-loader"]
                 },
                 {
-                    test: /\.(png)|(jpg)|(gif)|(woff)|(svg)|(eot)|(ttf)$/,
+                    test: /\.(png)|(jpg)|(gif)|(woff)|(svg)|(eot)|(ttf)|(otf)$/,
                     use: "url-loader"
                 },
                 {
-                    test: /\.styl$/,
+                    test: /\.(styl|stylus)$/,
                     use: [devMode ? "style-loader" : MiniCssExtractPlugin.loader, "css-loader", "stylus-loader"]
                 }
             ]
@@ -61,7 +64,12 @@ module.exports = function (env, args) {
             }
         },
         plugins: [
+
+            new VueLoaderPlugin(),
+
             new webpack.ProvidePlugin({
+                $: 'jquery',
+                jQuery: 'jquery'
             }),
 
             new CleanWebpackPlugin([buildPath]),
@@ -76,7 +84,10 @@ module.exports = function (env, args) {
             })
         ],
         resolve: {
-            extensions: [".js"]
+            extensions: [".js", ".vue"],
+            alias: {
+                'vue': 'vue/dist/vue.esm.js'
+            }
         },
         mode: devMode ? "development" : "production"
     }

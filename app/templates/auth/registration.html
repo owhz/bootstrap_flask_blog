@@ -1,0 +1,10 @@
+{% extends "_layout.html" %}
+{% import "_macros.html" as macros %}
+
+
+{% block content %}
+<div class="ml-auto mr-auto pt-5" style="max-width: 500px; padding-left: 20px; padding-right: 20px;">
+    {@ macros.quick_form(form, url_for('auth.register', action=url_for('auth.register'))) @}
+</div>
+
+{% endblock %}

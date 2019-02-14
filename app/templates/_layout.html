@@ -1,35 +1,106 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        {% block css %}
-            {{ stylesheet_tag("vendor") | safe }}
-            {{ stylesheet_tag("main") | safe }}
-        {% endblock %}
-    </head>
-    <body>
-    {% block navbar %}
+    <!-- block head -->
+    {% block head %}
+        <head>
+            <!-- block meta -->
+            {% block meta %}
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+            {% endblock %}
+            <!-- block css -->
+            {% block css %}
+                {@ stylesheet_tag("vendor") | safe @}
+                {@ stylesheet_tag("main") | safe @}
+            {% endblock %}
+        </head>
     {% endblock %}
-    {% block content %}
+    <!-- block body -->
+    {% block body %}
+        <body>
+            <!-- block navbar -->
+            {% block navbar %}
+                <nav class="navbar navbar-expand-lg sticky-top navbar-light bg-light">
+                    <a class="navbar-brand ml-5" href="{@ url_for('home.index') @}">Newo</a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="navbarContent">
+                        <ul class="navbar-nav mr-auto">
+                            <li class="nav-item {@ 'active' if request.endpoint == 'home.index' else '' @}">
+                                <a class="nav-link" href="{@ url_for('home.index') @}">Home<span class="sr-only"></span></a>
+                            </li>
+                        </ul>
+
+                        <ul class="navbar-nav mr-5">
+                            {% if current_user.is_authenticated %}
+                                <li class="nav-item dropdown mr-2">
+                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Create
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-sm-right" aria-labelledby="navbarDropdown">
+                                        <a class="dropdown-item" href="{@ url_for('post.new_post')@}">Post</a>
+                                        <a class="dropdown-item" href="{@ url_for('auth.logout') @}">Logout</a>
+                                    </div>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{@ url_for('user.overview', username=current_user.username) @}">
+                                        <img src="{@ current_user.gravatar(40) @}">
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="nav-item {@ 'active' if request.endpoint == 'auth.login' else '' @}">
+                                    <a class="nav-link" href="{@ url_for('auth.login') @}">Login</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </nav>
+            {% endblock %}
+
+            <div class="container">
+                {% with messages = get_flashed_messages(with_categories=True) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            {% set category = 'primary' if category == 'message' else category %}
+                            <div class="alert alert-{@ category@} alert-dismissible fade show mr-auto ml-auto" style="width: 40%" role="alert">
+                                {% if category in ['warning', 'info', 'success', 'error'] %}
+                                    <strong>{@ category | capitalize @}!</strong>
+                                {% endif %}
+                                {@ message @}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+
+            <!-- block content -->
+            {% block content %}
+            {% endblock %}
+
+            <!-- block script -->
+            {% block script %}
+                {@ javascript_tag("vendor") | safe @}
+                {@ javascript_tag("main") | safe @}
+            {% endblock %}
+        </body>
     {% endblock %}
-    {% block script %}
-        {{ javascript_tag("vendor") | safe }}
-        {{ javascript_tag("main") | safe }}
-    {% endblock %}
-    </body>
 </html>
 
 {#
-<!--{% extends "bootstrap/base.html" %}-->
+<!--{% extends "bootstrap/_base.html" %}-->
 
 
 <!--{% block head %}-->
-    <!--{{ super() }}-->
-    <!--<link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/feather-icons.css') }}">-->
-    <!--<link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/bootstrap-multiselect.css') }}">-->
-    <!--<link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/highlight/tomorrow.css') }}">-->
-    <!--<link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-fileinput-master/css/fileinput.css') }}">-->
+    <!--{@ super() @}-->
+    <!--<link rel="stylesheet" href="{@ url_for('static', filename='css/vendor/feather-icons.css') @}">-->
+    <!--<link rel="stylesheet" href="{@ url_for('static', filename='css/vendor/bootstrap-multiselect.css') @}">-->
+    <!--<link rel="stylesheet" href="{@ url_for('static', filename='css/vendor/highlight/tomorrow.css') @}">-->
+    <!--<link rel="stylesheet" href="{@ url_for('static', filename='bootstrap-fileinput-master/css/fileinput.css') @}">-->
 <!--{% endblock %}-->
 
 
@@ -44,7 +115,7 @@
                 <!--<button type="button" class="close" data-dismiss="alert">-->
                     <!--<span aria-hidden="true">&times;</span>-->
                 <!--</button>-->
-                <!--{{ message }}-->
+                <!--{@ message @}-->
             <!--</div>-->
         <!--{% endfor %}-->
         <!--{% block page_content %}-->
@@ -55,13 +126,13 @@
 
 
 <!--{% block scripts %}-->
-    <!--{{ super() }}-->
-    <!--{{ moment.include_moment() }}-->
-    <!--<script type="text/javascript" src="{{ url_for('static', filename='js/vendor/bootstrap-multiselect.js') }}"></script>-->
-    <!--<script type="text/javascript" src="{{ url_for('static', filename='js/vendor/highlight.pack.js') }}"></script>-->
-    <!--<script type="text/javascript" src="{{ url_for('static', filename='js/vendor/bootbox.min.js') }}"></script>-->
-    <!--&lt;!&ndash;<script type="text/javascript" src="{{ url_for('static', filename='bootstrap-fileinput-master/js/fileinput.js') }}"></script>&ndash;&gt;-->
-    <!--<script type="text/javascript" src="{{ url_for('static', filename='js/vendor/marked.js') }}"></script>-->
+    <!--{@ super() @}-->
+    <!--{@ moment.include_moment() @}-->
+    <!--<script type="text/javascript" src="{@ url_for('static', filename='js/vendor/bootstrap-multiselect.js') @}"></script>-->
+    <!--<script type="text/javascript" src="{@ url_for('static', filename='js/vendor/highlight.pack.js') @}"></script>-->
+    <!--<script type="text/javascript" src="{@ url_for('static', filename='js/vendor/bootbox.min.js') @}"></script>-->
+    <!--&lt;!&ndash;<script type="text/javascript" src="{@ url_for('static', filename='bootstrap-fileinput-master/js/fileinput.js') @}"></script>&ndash;&gt;-->
+    <!--<script type="text/javascript" src="{@ url_for('static', filename='js/vendor/marked.js') @}"></script>-->
     <!--<script>hljs.initHighlightingOnLoad();</script>-->
 <!--{% endblock %}-->
 

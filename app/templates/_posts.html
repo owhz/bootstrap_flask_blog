@@ -1,36 +1,36 @@
 {% for post in posts %}
-    <article id="post-{{ post.id }}" class="tile post-tile">
-        <div class="tile-body post-body">
-            <div class="post-meta">
+<article id="post-{@ post.id @}" class="tile post-tile">
+    <div class="tile-body post-body">
+        <div class="post-meta">
                 <span class="post-date">
-                    <a href="{{ url_for('main.index', archive_date=moment(post.timestamp).format('YYYYMM')) }}">{{ moment(post.timestamp).format('LL') }}</a>
+                    <a href="{@ url_for('home.index', archive_date=moment(post.timestamp).format('YYYYMM')) @}">{@ moment(post.timestamp).format('LL') @}</a>
                 </span>
-            </div>
-            <h3 class="post-title"><a href="{{ url_for('main.post', id=post.id) }}">{{ post.title }}</a></h3>
-            <div>
-                <p class="preview">{{ post.body_html | safe | striptags }}</p>
-            </div>
-            <div class="post-meta">
-                <span class="post-author"><a href="{{ url_for('main.index') }}">{{ post.user.username }}</a></span>
-                {% if post.category %}
-                    <span class="post-delimiter">|</span>
-                    <span class="post-category"><a href="{{ url_for('main.index', category_id=post.category.id) }}">{{ post.category.name }}</a></span>
-                {% endif %}
-                {% set tags = post.tags.all() %}
-                {% if tags %}
-                    <span class="post-delimiter">|</span>
-                    {% for tag in tags %}
-                        <span class="post-tag">#<a href="{{ url_for('main.index', tag_id=tag.id) }}">{{ tag.name }}</a></span>
-                    {% endfor %}
-                {% endif %}
-            </div>
-            <div class="post-meta">
-                {% if not current_user.is_anonymous %}
-                    <a class="post-do" href="{{ url_for('main.edit_post', id=post.id) }}">edit</a>
-                    <a class="post-do" href="{{ url_for('main.delete_post', id=post.id) }}">delete</a>
-                {% endif %}
-            </div>
-            <a class="btn button-ghost" href="{{ url_for('main.post', id=post.id) }}">Read More</a>
         </div>
-    </article>
+        <h3 class="post-title"><a href="{@ url_for('home.post', id=post.id) @}">{@ post.title @}</a></h3>
+        <div>
+            <p class="preview">{@ post.body_html | safe | striptags @}</p>
+        </div>
+        <div class="post-meta">
+            <span class="post-author"><a href="{@ url_for('user.overview', username=post.user.username) @}">{@ post.user.username @}</a></span>
+            {% if post.category %}
+            <span class="post-delimiter">|</span>
+            <span class="post-category"><a href="{@ url_for('home.index', category_id=post.category.id) @}">{@ post.category.name @}</a></span>
+            {% endif %}
+            {% set tags = post.tags.all() %}
+            {% if tags %}
+            <span class="post-delimiter">|</span>
+            {% for tag in tags %}
+            <span class="post-tag">#<a href="{@ url_for('home.index', tag_id=tag.id) @}">{@ tag.name @}</a></span>
+            {% endfor %}
+            {% endif %}
+        </div>
+        <div class="post-meta">
+            {% if not current_user.is_anonymous %}
+            <a class="post-do" href="">edit</a>
+            <a class="post-do" href="{@ url_for('home.delete_post', id=post.id) @}">delete</a>
+            {% endif %}
+        </div>
+        <a class="btn button-ghost" href="{@ url_for('home.post', id=post.id) @}">Read More</a>
+    </div>
+</article>
 {% endfor %}

@@ -18,6 +18,9 @@ class Config:
 
     WEBPACK_MANIFEST_PATH = os.path.join(basedir, 'app/webpack/manifest.json')
 
+    CELERY_RESULT_BACKEND = ''
+    CELERY_BROKER_URL = ''
+
     @classmethod
     def init_app(cls, app):
         pass

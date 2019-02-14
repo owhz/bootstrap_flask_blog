@@ -2,45 +2,24 @@
 {% import "_macros.html" as macros %}
 
 
-{% block navbar %}
-    {{ super() }}
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="{{ url_for('main.index') }}">Newo</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="{{ url_for('main.index') }}">Home<span class="sr-only">(current)</span></a>
-                </li>
-            </ul>
-            <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
-        </div>
-    </nav>
-{% endblock %}
-
-
 {% block content %}
     <div class="container">
         <div class="row">
             <div class="col-md-8">
                 {% include "_posts.html" %}
-                {{ macros.show_pagination('main.index', pagination=pagination) }}
+                {@ macros.show_pagination('home.index', pagination=pagination) @}
             </div>
             <div class="col-md-4">
                 {% include "_sidebar.html" %}
             </div>
         </div>
     </div>
-
 {% endblock %}
 
 <!--<div class="navbar navbar-default navbar-fixed-top">-->
 <!--<div class="container">-->
 <!--<div class="navbar-header">-->
-<!--<a class="navbar-brand" href="{{ url_for('main.index') }}">Blog</a>-->
+<!--<a class="navbar-brand" href="{@ url_for('home.index') @}">Blog</a>-->
 <!--<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse" aria-expanded="false">-->
 <!--<span class="icon-bar"></span>-->
 <!--<span class="icon-bar"></span>-->
@@ -51,23 +30,23 @@
 <!--<ul class="nav navbar-nav navbar-right">-->
 <!--{% if current_user.is_authenticated %}-->
 <!--<li>-->
-<!--<a class="dropdown-toggle" data-toggle="dropdown" href="{{ url_for('main.new_post') }}">Post-->
+<!--<a class="dropdown-toggle" data-toggle="dropdown" href="{@ url_for('home.new_post') @}">Post-->
 <!--<span class="caret"></span></a>-->
 <!--<ul class="dropdown-menu">-->
-<!--<li><a href="{{ url_for('main.new_post') }}">New Post</a></li>-->
+<!--<li><a href="{@ url_for('home.new_post') @}">New Post</a></li>-->
 <!--<li role="separator" class="divider"></li>-->
-<!--<li><a href="{{ url_for('main.list_tag') }}">Tags</a></li>-->
-<!--<li><a href="{{ url_for('main.list_category') }}">Categories</a></li>-->
+<!--<li><a href="{@ url_for('home.list_tag') @}">Tags</a></li>-->
+<!--<li><a href="{@ url_for('home.list_category') @}">Categories</a></li>-->
 <!--</ul>-->
 <!--</li>-->
 <!--<li>-->
-<!--<a class="dropdown-toggle" data-toggle="dropdown" href="">{{ current_user.username }} <span class="caret"></span></a>-->
+<!--<a class="dropdown-toggle" data-toggle="dropdown" href="">{@ current_user.username @} <span class="caret"></span></a>-->
 <!--<ul class="dropdown-menu">-->
-<!--<li><a href="{{ url_for('auth.logout') }}">Log Out</a></li>-->
+<!--<li><a href="{@ url_for('auth.logout') @}">Log Out</a></li>-->
 <!--</ul>-->
 <!--</li>-->
 <!--{% else %}-->
-<!--<li><a href="{{ url_for('auth.login') }}">Log In</a></li>-->
+<!--<li><a href="{@ url_for('auth.login') @}">Log In</a></li>-->
 <!--{% endif %}-->
 <!--</ul>-->
 <!--</div>-->

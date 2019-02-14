@@ -3,17 +3,17 @@
 
 {% block page_content %}
     <div style="margin-bottom: 10px;">
-        <a class="btn btn-sm btn-default" href="{{ url_for('main.new_category') }}">Add</a>
+        <a class="btn btn-sm btn-default" href="{@ url_for('home.new_category') @}">Add</a>
     </div>
     <ul class="list-group">
         {% for category in categories %}
             <li class="list-group-item">
-                {{ category.name }}
+                {@ category.name @}
                 <div style="float: right;display: inline-block;top: -5px;position: relative;">
                     {% if category.posts.count() == 0 %}
-                        <a class="btn btn-sm btn-danger" href="{{ url_for('main.delete_category', id=category.id) }}">Delete</a>
+                        <a class="btn btn-sm btn-danger" href="{@ url_for('home.delete_category', id=category.id) @}">Delete</a>
                     {% endif %}
-                    <a class="btn btn-sm btn-default"  href="{{ url_for('main.edit_category', id=category.id) }}">Edit</a>
+                    <a class="btn btn-sm btn-default"  href="{@ url_for('home.edit_category', id=category.id) @}">Edit</a>
                 </div>
             </li>
         {% endfor %}

@@ -1,7 +1,6 @@
 bleach==2.1.4
 Faker==0.9.0
 Flask==1.0.2
-Flask-Bootstrap==3.3.7.1
 Flask-Login==0.4.1
 Flask-Migrate==2.2.1
 Flask-Moment==0.6.0
