@@ -1,0 +1,110 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #fff;
+
+  .container {
+    margin-top: $container-margin-top;
+  }
+}
+
+
+.nav-link-icon {
+  svg {
+    height: 20px;
+    widows: 20px;
+  }
+}
+
+.notification-badge {
+  position: absolute;
+  top: 3px;
+  left: 22px;
+  font-size: 10px;
+  max-width: 33px;
+}
+
+.message-badge {
+  position: absolute;
+  top: 3px;
+  left: 22px;
+  font-size: 10px;
+  max-width: 33px;
+}
+
+
+.notification-panel {
+  position: absolute;
+  right: 0
+  top: 40px;
+}
+
+
+.message-panel {
+  position: absolute;
+  right: 0
+  top: 40px;
+}
+
+.channel-list {
+  margin-top: 100px;
+  top: 100px;
+  position: -webkit-sticky;
+  position: sticky;
+
+  .channel-item {
+
+    font-size: 13px;
+    text-align: left;
+    //padding: 10px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    text-decoration: none;
+    list-style: none;
+    //border-top: 1px solid $color7;
+    //border-left: 1px solid $color7;
+    //border-right: 1px solid $color7;
+
+    &:first-child {
+      //border-top-left-radius: 4px;
+      //border-top-right-radius: 4px;
+    }
+
+    &:last-child {
+      //border-bottom: 1px solid $color7;
+      //border-bottom-left-radius: 4px;
+      //border-bottom-right-radius: 4px;
+    }
+
+    .channel-icon {
+      width: 2.5rem;
+    }
+  }
+}
+
+.notification-panel-body {
+  overflow: scroll;
+  font-size: 12px;
+}
+
+
+.notification-item {
+  .notification-status {
+    position: relative;
+
+    .notification-unread {
+      position: absolute;
+      height: 8px;
+      width: 8px;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      margin: auto;
+      background-color: $color9;
+      border-radius: 50%;
+      display: inline-block;
+    }
+  }
+}

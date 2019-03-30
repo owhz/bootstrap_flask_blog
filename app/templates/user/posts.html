@@ -1,4 +1,37 @@
 {% extends "user/_base.html" %}
+{% import "_macros.html" as macros %}
+
 
 {% block user_content %}
+    {% if current_user != g.user %}
+        {% for item in posts %}
+            {@ macros.quick_post(item) @}
+        {% endfor %}
+        {@ macros.quick_pagination(".posts", pagination) @}
+    {% else %}
+        {% if current_user.is_authenticated %}
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link {@ 'active' if not is_draft or '' @}" id="posts-tab" href="{@ url_for('.posts', page=1, draft=0) @}" role="tab">Posts</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {@ 'active' if is_draft or '' @}" id="drafts-tab" href="{@ url_for('.posts', page=1, draft=1) @}" role="tab">Drafts</a>
+                </li>
+            </ul>
+            <div class="tab-content" style="padding-top: 20px;">
+                <div class="tab-pane {@ 'active' if not is_draft or '' @}" role="tabpanel">
+                    {% for item in posts %}
+                        {@ macros.quick_post(item) @}
+                    {% endfor %}
+                    {@ macros.quick_pagination(".posts", pagination) @}
+                </div>
+                <div class="tab-pane {@ 'active' if is_draft or '' @}" role="tabpanel">
+                    {% for item in posts %}
+                        {@ macros.quick_post(item) @}
+                    {% endfor %}
+                    {@ macros.quick_pagination(".posts", pagination) @}
+                </div>
+            </div>
+        {% endif %}
+    {% endif %}
 {% endblock %}

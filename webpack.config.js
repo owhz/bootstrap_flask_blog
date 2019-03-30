@@ -16,8 +16,8 @@ module.exports = function (env, args) {
         context: __dirname,
         entry: {
             "main": ["./assets/js/main.js"],
-            "editPost": "./assets/js/editPost.js",
-            "user": "./assets/js/user.js"
+            "user": "./assets/js/user.js",
+            "blog": "./assets/js/blog.js"
         },
         output: {
             path: buildPath,
@@ -80,7 +80,8 @@ module.exports = function (env, args) {
             }),
 
             new ManifestRevisionPlugin(path.join("./app/webpack", "manifest.json"), {
-                rootAssetPath: rootAssetPath
+                rootAssetPath: rootAssetPath,
+                ignorePaths: [/.*\.DS_Store/]
             })
         ],
         resolve: {

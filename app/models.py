@@ -1,6 +1,7 @@
 import hashlib
 from datetime import datetime
 
+import bleach
 from flask import current_app
 from flask_login import AnonymousUserMixin, UserMixin
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
@@ -24,6 +25,7 @@ ROLES = {
     'Administrator': Permission.FOLLOW | Permission.WRITE | Permission.COMMENT | Permission.MODERATE | Permission.ADMIN
 }
 
+
 post_tags = db.Table('post_tags', db.Model.metadata,
                      db.Column('tag_id', db.Integer, db.ForeignKey('tags.id')),
                      db.Column('post_id', db.Integer, db.ForeignKey('posts.id'))
@@ -31,9 +33,6 @@ post_tags = db.Table('post_tags', db.Model.metadata,
 
 
 class Role(db.Model):
-    """
-    角色
-    """
     __tablename__ = 'roles'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -70,21 +69,31 @@ class Role(db.Model):
         db.session.commit()
 
 
-class Category(db.Model):
-    """
-    目录
-    """
-    __tablename__ = 'categories'
+class Channel(db.Model):
+    __tablename__ = 'channels'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True, index=True)
-    posts = db.relationship('Post', backref='category', lazy='dynamic')
+    icon = db.Column(db.Text())
+
+    posts = db.relationship('Post', back_populates='channel', lazy='dynamic')
+
+    @staticmethod
+    def insert_channels():
+        channels = ['Python', 'JavaScript', 'dot-net', 'docker', 'Java', 'TypeScript', 'Vue.js']
+        for i in channels:
+            channel = Channel.query.filter_by(name=i).first()
+            if channel:
+                channel.icon = i.lower()
+            else:
+                channel = Channel()
+                channel.name = i
+                channel.icon = i.lower()
+            db.session.add(channel)
+        db.session.commit()
 
 
 class Tag(db.Model):
-    """
-    标签
-    """
     __tablename__ = 'tags'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -100,10 +109,37 @@ class Follow(db.Model):
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
 
+class Message(db.Model):
+    __tablename__ = 'messages'
+
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.String(140))
+    is_read = db.Column(db.Boolean, default=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+
+    sender_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    receiver_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+    # author = db.relationship('User', back_populates='messages_sent', foreign_keys=('users.id'), lazy='dynamic')
+    # recipient = db.relationship('User', back_populates='messages_received', foreign_keys=('users.id'), lazy='dynamic')
+
+    def __repr__(self):
+        return '<Message %s>' % self.content
+
+
+class Notification(db.Model):
+    __tablename__ = 'notifications'
+
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.Text)
+    is_read = db.Column(db.Boolean, default=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+
+    receiver_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    receiver = db.relationship('User', back_populates='notifications')
+
+
 class User(UserMixin, db.Model):
-    """
-    用户
-    """
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -112,12 +148,19 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'), nullable=False)
     role = db.relationship('Role', back_populates='users')
-    posts = db.relationship('Post', backref='user', lazy='dynamic')
+    posts = db.relationship('Post', back_populates='author', lazy='dynamic')
     last_visit = db.Column(db.DateTime)
-    confirmed = db.Column(db.Boolean, default=False)
+    is_confirmed = db.Column(db.Boolean, default=False)
+    member_since = db.Column(db.DateTime, default=datetime.utcnow)
     image_hash = db.Column(db.String(128))
-    follower = db.relationship('Follow', foreign_keys=[Follow.followed_id], backref=db.backref('followed', lazy='joined'), lazy='dynamic')
-    followed = db.relationship('Follow', foreign_keys=[Follow.follower_id], backref=db.backref('follower', lazy='joined'), lazy='dynamic')
+
+    followings = db.relationship('Follow', foreign_keys=[Follow.follower_id], backref=db.backref('follower', lazy='joined'), lazy='dynamic')
+    followers = db.relationship('Follow', foreign_keys=[Follow.followed_id], backref=db.backref('followed', lazy='joined'), lazy='dynamic')
+
+    messages_sent = db.relationship('Message', foreign_keys=[Message.sender_id], backref='author', lazy='dynamic')
+    messages_received = db.relationship('Message', foreign_keys=[Message.receiver_id], backref='receiver', lazy='dynamic')
+
+    notifications = db.relationship('Notification', back_populates='receiver', lazy='dynamic')
 
     @property
     def password(self):
@@ -150,20 +193,19 @@ class User(UserMixin, db.Model):
     def gravatar(self, size=100, default='identicon', rating='g'):
         url = 'https://secure.gravatar.com/avatar'
         # hash = hashlib.md5(self.email.lower().encode('utf-8')).hexdigest()
-        return '{url}/{hash}?s={size}&d={default}&r={rating}'.format(url=url, hash=self.image_hash, size=size,
+        return '{url}/{hash}?s={size}&d={default}&r={rating}'.format(url=url, hash=self.image_hash,
+                                                                     size=size,
                                                                      default=default,
                                                                      rating=rating)
 
     def follow(self, user):
         if user is not None:
             model = Follow(follower_id=self.id, followed_id=user.id)
-            # model = Follow(self, user)
             db.session.add(model)
-            db.session.commit()
 
     def unfollow(self, user):
         if user is not None:
-            model = self.followed.filter_by(followed_id=user.id).first()
+            model = self.followings.filter_by(followed_id=user.id).first()
             # model = Follow.query.filter(Follow.follower_id == self.id, Follow.followed_id == user.id).first()
             db.session.delete(model)
             db.session.commit()
@@ -171,10 +213,20 @@ class User(UserMixin, db.Model):
     def is_following(self, user):
         if user is None:
             return False
-        return self.followed.filter_by(followed_id=user.id).first() is not None
+        return self.followings.filter_by(followed_id=user.id).first() is not None
 
     def is_followed_by(self, user):
         pass
+
+    def can(self, permission_name):
+        role = Role.query.filter_by(name=permission_name).first()
+        if role and self.role.permissions & role.permissions:
+            return True
+        return False
+
+    @property
+    def is_admin(self):
+        return self.role.name == 'Administrator'
 
     @staticmethod
     def on_email_change(target, value, oldvalue, initiator):
@@ -187,32 +239,35 @@ class User(UserMixin, db.Model):
 
 
 class Post(db.Model):
-    """
-    文章
-    """
     __tablename__ = 'posts'
 
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(64))
+    title = db.Column(db.String(256))
     body = db.Column(db.Text)
     body_html = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-    is_public = db.Column(db.Boolean, default=True)
+    is_draft = db.Column(db.Boolean, default=False)
+    fixed_link = db.Column(db.String(128))
+
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    category_id = db.Column(db.Integer, db.ForeignKey('categories.id'), nullable=True)
+    author = db.relationship('User', back_populates='posts')
+
+    channel_id = db.Column(db.Integer, db.ForeignKey('channels.id'), nullable=True)
+    channel = db.relationship('Channel', back_populates='posts')
+
     comments = db.relationship('Comment', back_populates='post', cascade='all,delete-orphan')
     tags = db.relationship('Tag', secondary=post_tags, back_populates='posts', lazy='dynamic')
 
-    # @staticmethod
-    # def on_body_change(target, value, oldvalue, initiator):
-    #     # allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code', 'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
-    #     #                 'h1', 'h2', 'h3', 'h4', 'h5' 'p']
-    #     # target.body_html = bleach.linkify(bleach.clean(
-    #     #     # markdown(value, extensions=['fenced_code', 'codehilite'], output_format='html5'),
-    #     #     markdown(value, extras=['fenced-code-blocks']),
-    #     #     tags=allowed_tags, strip=True))
-    #
-    #     target.body_html = utils.convert_to_html(value)
+    @staticmethod
+    def on_body_set(target, value, oldvalue, initiator):
+        # allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code', 'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
+        #                 'h1', 'h2', 'h3', 'h4', 'h5' 'p']
+        # bleach.sanitizer.ALLOWED_TAGS = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code', 'em', 'i', 'li', 'ol',
+        #                                  'strong', 'ul']
+        # marked_value = markdown(value)
+        cleaned_value = bleach.clean(value, strip=False)
+        target.body_html = bleach.linkify(cleaned_value)
+            # markdown(value, extensions=['fenced_code', 'codehilite'], output_format='html5'),
 
 
 class Comment(db.Model):
@@ -224,19 +279,13 @@ class Comment(db.Model):
     body = db.Column(db.Text)
     reviewed = db.Column(db.Boolean, default=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
     post = db.relationship('Post', back_populates='comments')
+
     reply_id = db.Column(db.Integer, db.ForeignKey('comments.id'))
     replied = db.relationship('Comment', back_populates='replies', remote_side=[id])
     replies = db.relationship('Comment', back_populates='replied', cascade='all')
-
-
-class PrivateMessage(db.Model):
-    __tablename__ = 'private_messages'
-
-    id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.Text)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow, index=True)
 
 
 class Collection(db.Model):
@@ -247,7 +296,10 @@ class Collection(db.Model):
 
 
 class AnonymousUser(AnonymousUserMixin):
-    pass
+
+    @property
+    def is_admin(self):
+        return False
 
 
 @login_manager.user_loader
@@ -257,5 +309,5 @@ def load_user(id):
 
 login_manager.anonymous_user = AnonymousUser
 
-# db.event.listen(Post.body, 'set', Post.on_body_change)
+db.event.listen(Post.body, 'set', Post.on_body_set)
 db.event.listen(User.email, 'set', User.on_email_change)

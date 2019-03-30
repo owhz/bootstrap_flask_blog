@@ -1,0 +1,54 @@
+{% extends "_layout.html" %}
+{% import "_macros.html" as macros %}
+
+
+{% block content %}
+    {@ super() @}
+
+    <div class="container">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link {@ 'active' if filter_rule == 'unread' else '' @}"
+                   href="{@ url_for('home.show_notifications', filter_rule='unread') @}">Unread</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {@ 'active' if filter_rule == 'all' else '' @}"
+                   href="{@ url_for('home.show_notifications', filter_rule='all') @}">All</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-panel">
+                <div class="row content-row" style="padding-bottom: 20px; margin-top: 20px;">
+                    <form method="post" action="{@ url_for('home.read_all_notifications') @}">
+                        <button class="btn btn-sm btn-outline-primary">Mark all read</button>
+                    </form>
+                </div>
+                {% for item in notifications %}
+                    <div class="row content-row">
+                        <div class="col-md-12 content-item notification-item">
+                            <div class="pl-2 pr-2 mr-1 notification-status">
+                                {% if not item.is_read %}
+                                    <span class="notification-unread"></span>
+                                {% endif %}
+                            </div>
+                            <div class="flex-fill d-inline-flex justify-content-between">
+                                <div>
+                                    {@ item.content | safe @}
+                                </div>
+                                {% if not item.is_read %}
+                                    <div class="read-button">
+                                        <form method="post" action="{@ url_for('home.read_notification', filter_rule=filter_rule, notification_id=item.id) @}">
+                                            <a href="javascript:void(0);" onclick="this.parentElement.submit()"><i data-feather="check"></i></a>
+                                        </form>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            {@ macros.quick_pagination('home.show_notifications', pagination=pagination, filter_rule=filter_rule) @}
+        </div>
+    </div>
+{% endblock %}
+

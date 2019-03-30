@@ -1,15 +1,13 @@
 import os
 import subprocess
-import sys
 
 import click
-from flask import current_app
 from flask.cli import with_appcontext
-from sqlalchemy.schema import CreateSchema
+from flask_migrate import upgrade
 
 from app.extensions import db
-from app.fake import create_categories, create_data, create_posts, create_tags
-from app.models import Role, User
+from app.faker import insert_categories, insert_posts, insert_tags, insert_users, insert_comments, insert_follows
+from app.models import Role, User, Channel
 
 
 def register_commands(app):
@@ -19,6 +17,7 @@ def register_commands(app):
     app.cli.add_command(fake)
     app.cli.add_command(table)
     app.cli.add_command(insert_roles)
+    app.cli.add_command(insert_channels)
     app.cli.add_command(administrator)
 
 
@@ -64,12 +63,32 @@ def insert_roles():
 
 
 @click.command()
-@click.option('--category', default=10)
-@click.option('--post', default=10)
-@click.option('--tag', default=10)
 @with_appcontext
-def fake(category, post, tag):
-    pass
+def insert_channels():
+    Channel.insert_channels()
+
+
+@click.command()
+@click.option('--users', is_flag=True)
+@click.option('--follows', is_flag=True)
+@click.option('--categories', is_flag=True)
+@click.option('--posts', is_flag=True)
+@click.option('--tags', is_flag=True)
+@click.option('--comments', is_flag=True)
+@with_appcontext
+def fake(users, follows, categories, posts, tags, comments):
+    if users:
+        insert_users()
+    elif follows:
+        insert_follows()
+    elif categories:
+        insert_categories()
+    elif posts:
+        insert_posts()
+    elif tags:
+        insert_tags()
+    elif comments:
+        insert_comments()
 
 
 @click.command()
@@ -131,3 +150,21 @@ def administrator(create, delete, update):
             click.echo('Administrator has been updated.')
         else:
             click.echo('No administrator found.')
+
+
+@click.command()
+def test():
+    pass
+
+
+# @click.command()
+# def init_amdin_user():
+#     upgrade()
+#     db.create_all()
+#     user = User.query.filter_by(email=current_app.config['BLOG_ADMIN_EMAIL']).first()
+#     if not user:
+#         user = User(email=current_app.config['BLOG_ADMIN_EMAIL'],
+#                     username=current_app.config['BLOG_ADMIN_USERNAME'],
+#                     password=current_app.config['BLOG_ADMIN_PASSWORD'])
+#         db.session.add(user)
+#         db.session.commit()

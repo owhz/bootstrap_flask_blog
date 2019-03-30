@@ -4,3 +4,4 @@ venv/
 __pycache__/
 *.swp
 .env
+.python-versionn

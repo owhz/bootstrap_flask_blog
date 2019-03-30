@@ -2,10 +2,16 @@
 {% import "_macros.html" as macros %}
 
 
-{% macro nav_link(endpoint, icon, title) %}
+{% macro nav_link(endpoint, icon, title, count=none) %}
 <li class="nav-item {@ 'active' if request.endpoint == 'user' + endpoint else '' @}">
     <a href="{@ url_for(endpoint) @}" class="nav-link">
-        <span class="oi oi-{@ icon @}"></span> {@ title @}
+        <span class="oi oi-{@ icon @}"></span>
+        <span class="mr-auto"> {@ title @}</span>
+        {% if count is not none %}
+            <div class="float-right">
+                <span class="badge badge-pill badge-secondary">{@ count @}</span>
+            </div>
+        {% endif %}
     </a>
 </li>
 {% endmacro %}
@@ -16,60 +22,57 @@
 {% set user = g.user %}
 <div class="container" id="userApp">
     <div class="row user">
-        <div class="col-md-3 offset-1">
+        <div class="col-md-3">
             <!-- user sidebar sidebar -->
             <div class="user-sidebar">
-                <img class="ml-auto mr-auto" style="display:block" src="{@ user.gravatar('120') @}">
-
+                <img class="ml-auto mr-auto rounded" style="display:block" src="{@ user.gravatar('120') @}">
                 <!-- user sidebar title -->
                 <div class="user-sidebar-title">
                     {@ user.username @}
                 </div>
-
                 <!-- user sidebar buttons -->
                 {% with %}
-                {% set follow_url = url_for('user.follow', username=user.username) %}
-                {% set unfollow_url = url_for('user.unfollow', username=user.username) %}
-                {% if current_user.is_anonymous %}
-                <div class="user-sidebar-buttons">
-                    <button class="btn btn-success btn-sm" onclick="document.location.href='{@ follow_url @}'">Follow</button>
-                    <button class="btn btn-danger btn-sm">Message</button>
-                </div>
-                {% else %}
-                {% if current_user != user %}
-                <div class="user-sidebar-buttons">
-                    {% if current_user.is_following(user) %}
-                    <button class="btn btn-secondary btn-sm" onclick="document.location.href='{@ unfollow_url @}'">Unfollow</button>
+                    {% set follow_url = url_for('user.follow', username=user.username) %}
+                    {% set unfollow_url = url_for('user.unfollow', username=user.username) %}
+                    {% if current_user.is_anonymous %}
+                        <div class="user-sidebar-buttons">
+                            <button class="btn btn-success btn-sm" onclick="document.location.href='{@ follow_url @}'">Follow</button>
+                            <button class="btn btn-danger btn-sm">Message</button>
+                        </div>
                     {% else %}
-                    <button class="btn btn-success btn-sm" onclick="document.location.href='{@ follow_url @}'">Follow</button>
+                        {% if current_user != user %}
+                            <div class="user-sidebar-buttons">
+                                {% if current_user.is_following(user) %}
+                                    <button class="btn btn-secondary btn-sm" onclick="document.location.href='{@ unfollow_url @}'">Unfollow</button>
+                                {% else %}
+                                    <button class="btn btn-success btn-sm" onclick="document.location.href='{@ follow_url @}'">Follow</button>
+                                {% endif %}
+                                <button class="btn btn-danger btn-sm">Message</button>
+                            </div>
+                        {% endif %}
                     {% endif %}
-                    <button class="btn btn-danger btn-sm">Message</button>
-                </div>
-                {% endif %}
-                {% endif %}
                 {% endwith %}
-
                 <!-- user sidebar social -->
                 <div class="user-sidebar-social">
 
                 </div>
-
                 <!-- user sidebar menu -->
                 <div class="user-sidebar-menu">
                     <ul class="nav flex-column">
                         {@ nav_link('.overview', 'home', 'Overview') @}
-                        {@ nav_link('.posts', 'home', 'Posts')@}
-                        {@ nav_link('.collections', 'heart', 'Collections') @}
-                        {@ nav_link('.followings', 'heart', 'Followings') @}
+                        {@ nav_link('.posts', 'home', 'Posts', total_post_num) @}
+                        {@ nav_link('.collections', 'heart', 'Collections', total_post_collected_num) @}
+                        {@ nav_link('.followings', 'heart', 'Followings', total_following_num) @}
+                        {@ nav_link('.followers', 'heart', 'Followers', total_follower_num) @}
                         {@ nav_link('.account', 'person', 'Account') @}
                         {@ nav_link('.settings', 'wrench', 'Settings') @}
                     </ul>
                 </div>
             </div>
         </div>
-        <div class="col-md-7">
+        <div class="col-md-9">
             <!-- user content -->
-            <div class="user-content">
+            <div style="padding: 40px; min-height: 460px;">
                 {% block user_content %}
                 {% endblock %}
             </div>

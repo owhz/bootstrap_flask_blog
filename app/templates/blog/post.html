@@ -1,0 +1,1178 @@
+{% extends "blog/_base.html" %}
+
+
+{% block blog_content %}
+    {@ super() @}
+    <div class="row blog">
+        <div class="col-9 blog-main">
+            <div class="post-widget">
+
+            </div>
+            <h1 class="post-title">
+                {@ post.title @}
+                {#                <a href="{@ url_for('.post', id=post.id) @}">{@ post.title @}</a>#}
+            </h1>
+            <div class="post-body">
+                {#                {@ post.body_html | safe @}#}
+                <div class="article fmt article__content" data-id="1190000018240257" data-license="cc">
+
+                    <blockquote>翻译：疯狂的技术宅<br>原文：<a href="http://2ality.com/2019/01/future-js.html"
+                                                   rel="nofollow noreferrer" target="_blank">http://2ality.com/2019/01/fut...</a>
+                    </blockquote>
+                    <hr>
+                    <p>本文首发微信公众号：jingchengyideng<br>欢迎关注，每天都给你推送新鲜的前端技术文章</p>
+                    <hr>
+                    <p>近年来，JavaScript 的功能得到了大幅度的增加，本文探讨了其仍然缺失的东西。</p>
+                    <p>说明：</p>
+                    <ol>
+                        <li>我只列出了我所发现的最重要的功能缺失。当然还有很多其它有用的功能，但同时也会增加太多的风险。</li>
+                        <li>我的选择是主观的。</li>
+                        <li>本文中提及的几乎所有内容都在 TC39 的技术雷达上。 也就是说，它还可以作为未来可能的 JavaScript 的预览。</li>
+                    </ol>
+                    <p>有关前两个问题的更多想法，请参阅本文第8节：语言设计部分。</p>
+                    <h2 id="categoryHeading0">1. 值</h2>
+                    <h3 id="categoryHeading1">1.1 按值比较对象</h3>
+                    <p>目前，JavaScript 只能对原始<em>值（value）</em>进行比较，例如<em>字符串的值</em>（通过查看其内容）：</p>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="> 'abc' === 'abc'
+true" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="javascript hljs"><code class="javascript">&gt; <span class="hljs-string">'abc'</span> === <span
+                            class="hljs-string">'abc'</span>
+<span class="hljs-literal">true</span></code></pre>
+                    <p>相反，对象则通过<em>身份ID（identity）</em>进行比较（对象仅严格等于自身）：</p>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="> {x: 1, y: 4} === {x: 1, y: 4}
+false" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="javascript hljs"><code class="javascript">&gt; {<span class="hljs-attr">x</span>: <span
+                            class="hljs-number">1</span>, <span class="hljs-attr">y</span>: <span
+                            class="hljs-number">4</span>} === {<span class="hljs-attr">x</span>: <span
+                            class="hljs-number">1</span>, <span class="hljs-attr">y</span>: <span
+                            class="hljs-number">4</span>}
+<span class="hljs-literal">false</span></code></pre>
+                    <p>
+                        如果如果有一种能够创建按值进行比较对象的方法，那将是很不错的：如果有一种能够创建按值进行比较对象的方法，那将是很不错的：如果有一种能够创建按值进行比较对象的方法，那将是很不错的：如果有一种能够创建按值进行比较对象的方法，那将是很不错的：如果有一种能够创建按值进行比较对象的方法，那将是很不错的：如果有一种能够创建按值进行比较对象的方法，那将是很不错的：有一种能够创建按值进行比较对象的方法，那将是很不错的：</p>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="> #{x: 1, y: 4} === #{x: 1, y: 4}
+true" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="javascript hljs"><code class="javascript">&gt; #{<span class="hljs-attr">x</span>: <span
+                            class="hljs-number">1</span>, <span class="hljs-attr">y</span>: <span
+                            class="hljs-number">4</span>} === #{<span class="hljs-attr">x</span>: <span
+                            class="hljs-number">1</span>, <span class="hljs-attr">y</span>: <span
+                            class="hljs-number">4</span>}
+<span class="hljs-literal">true</span></code></pre>
+                    <p>另一种可能性是引入一种新的类（确切的细节还有待确定）：</p>
+                    <div class="widget-codetool" style="display: none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="@[ValueType]
+class Point {
+  // ···
+}" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="javascript hljs"><code class="javascript">@[ValueType]
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Point</span> </span>{
+  <span class="hljs-comment">// ···</span>
+}</code></pre>
+                    <p>旁注：这种类似装饰器的将类标记为值类型的的语法基于<a
+                            href="https://github.com/littledan/proposal-reserved-decorator-like-syntax"
+                            rel="nofollow noreferrer" target="_blank">草案提案</a>。</p>
+                    <h3 id="categoryHeading2">1.2 将对象放入数据结构中</h3>
+                    <p>如果对象通过身份ID进行比较，将它们放入 ECMAScript 数据结构（如Maps）中并没有太大意义：</p>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="const m = new Map();
+m.set({x: 1, y: 4}, 1);
+m.set({x: 1, y: 4}, 2);
+assert.equal(m.size, 2);" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="javascript hljs"><code class="javascript"><span
+                            class="hljs-keyword">const</span> m = <span class="hljs-keyword">new</span> <span
+                            class="hljs-built_in">Map</span>();
+m.set({<span class="hljs-attr">x</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">y</span>: <span
+                                class="hljs-number">4</span>}, <span class="hljs-number">1</span>);
+m.set({<span class="hljs-attr">x</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">y</span>: <span
+                                class="hljs-number">4</span>}, <span class="hljs-number">2</span>);
+assert.equal(m.size, <span class="hljs-number">2</span>);</code></pre>
+                    <p>可以通过自定义值类型修复此问题。 或者通过自定义 Set 元素和 Map keys 的管理。 例如：</p>
+                    <ul>
+                        <li>通过哈希表映射：需要一个操作来检查值是否相等，另一个操作用于创建哈希码。 如果使用哈希码，则对象应该是不可变的。 否则破坏数据结构就太容易了。</li>
+                        <li>通过排序树映射：需要一个比较值的操作用来管理它存储的值。</li>
+                    </ul>
+                    <h3 id="categoryHeading3">1.3 大整数</h3>
+                    <p>JavaScript 的数字总是64位的（双精度），它能为整数提供53位二进制宽度。这意味着如果超过53位，就不好使了：</p>
+                    <div class="widget-codetool" style="display: none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="> 2 ** 53
+9007199254740992
+> (2 ** 53) + 1  // can’t be represented
+9007199254740992
+> (2 ** 53) + 2
+9007199254740994" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="hljs markdown"><code class="repl"><span class="hljs-quote">&gt; 2 ** 53</span>
+9007199254740992
+<span class="hljs-quote">&gt; (2 ** 53) + 1  // can’t be represented</span>
+9007199254740992
+<span class="hljs-quote">&gt; (2 ** 53) + 2</span>
+9007199254740994</code></pre>
+                    <p>对于某些场景，这是一个相当大的限制。现在有[BigInts提案]（<a href="http://2ality.com/2017/03/es-integer.html"
+                                                           rel="nofollow noreferrer" target="_blank">http://2ality.com/2017/03/es-...</a>），这是真正的整数，其精度可以随着需要而增长：
+                    </p>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="> 2n ** 53n
+9007199254740992n
+> (2n ** 53n) + 1n
+9007199254740993n" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="hljs lisp"><code class="repl">&gt; <span class="hljs-number">2</span>n ** <span
+                            class="hljs-number">53</span>n
+<span class="hljs-number">9007199254740992</span>n
+&gt; (<span class="hljs-number">2</span>n ** <span class="hljs-number">53</span>n) + <span class="hljs-number">1</span>n
+<span class="hljs-number">9007199254740993</span>n</code></pre>
+                    <p>BigInts还支持 <em>casting</em>，它为你提供固定位数的值：</p>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="const int64a = BigInt.asUintN(64, 12345n);
+const int64b = BigInt.asUintN(64, 67890n);
+const result = BigInt.asUintN(64, int64a * int64b);" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="javascript hljs"><code class="js"><span class="hljs-keyword">const</span> int64a = BigInt.asUintN(<span
+                            class="hljs-number">64</span>, <span class="hljs-number">12345</span>n);
+<span class="hljs-keyword">const</span> int64b = BigInt.asUintN(<span class="hljs-number">64</span>, <span
+                                class="hljs-number">67890</span>n);
+<span class="hljs-keyword">const</span> result = BigInt.asUintN(<span
+                                class="hljs-number">64</span>, int64a * int64b);</code></pre>
+                    <h3 id="categoryHeading4">1.4 小数计算</h3>
+                    <p>JavaScript 的数字是基于 IEEE 754 标准的64位浮点数（双精度数）。鉴于它们的表示形式是基于二进制的，在处理小数部分时可能会出现舍入误差：</p>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="> 0.1 + 0.2
+0.30000000000000004" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="hljs css"><code class="repl">&gt; 0<span class="hljs-selector-class">.1</span> + 0<span
+                            class="hljs-selector-class">.2</span>
+0<span class="hljs-selector-class">.30000000000000004</span></code></pre>
+                    <p>这在科学计算和金融技术（金融科技）中尤其成问题。基于十进制运算的提案目前处于<a
+                            href="https://github.com/tc39/proposals/blob/master/stage-0-proposals.md"
+                            rel="nofollow noreferrer" target="_blank">阶段0</a>。它们可能最终被这样使用（注意十进制数的后缀 <code>m</code>）：</p>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="> 0.1m + 0.2m
+0.3m" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="hljs css"><code class="repl">&gt; 0<span class="hljs-selector-class">.1m</span> + 0<span
+                            class="hljs-selector-class">.2m</span>
+0<span class="hljs-selector-class">.3m</span></code></pre>
+                    <h3 id="categoryHeading5">1.5 对值进行分类</h3>
+                    <p>目前，在 JavaScript 中对值进行分类非常麻烦：</p>
+                    <ul>
+                        <li>首先，你必须决定是否使用 <code>typeof</code> 或 <code>instanceof</code>。</li>
+                        <li>其次，<code>typeof</code> 有一个众所周知的的怪癖，就是把 <code>null</code> 归类为“对象”。我还认为函数被归类为
+                            <code>'function'</code> 同样是奇怪的。
+                        </li>
+                    </ul>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="> typeof null
+'object'
+> typeof function () {}
+'function'
+> typeof []
+'object'" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="hljs actionscript"><code class="repl">&gt; <span
+                            class="hljs-keyword">typeof</span> <span class="hljs-literal">null</span>
+<span class="hljs-string">'object'</span>
+&gt; <span class="hljs-keyword">typeof</span> <span class="hljs-function"><span
+                                class="hljs-keyword">function</span> <span class="hljs-params">()</span> </span>{}
+<span class="hljs-string">'function'</span>
+&gt; <span class="hljs-keyword">typeof</span> []
+<span class="hljs-string">'object'</span></code></pre>
+                    <ul>
+                        <li>第三，<code>instanceof </code>不适用于来自其他<em>realm</em>（框架等）的对象。</li>
+                    </ul>
+                    <p>也许可能通过库来解决这个问题（如果我有时间，就会实现一个概念性的验证）。</p>
+                    <h2 id="categoryHeading6">2. 函数式编程</h2>
+                    <h3 id="categoryHeading7">2.1 更多表达式</h3>
+                    <p>不幸的是C风格的语言在表达式和语句之间做出了区分：</p>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="// 条件表达式
+let str1 = someBool ? 'yes' : 'no';
+
+// 条件声明
+let str2;
+if (someBool) {
+  str2 = 'yes';
+} else {
+  str2 = 'no';
+}" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="javascript hljs"><code class="js"><span class="hljs-comment">// 条件表达式</span>
+<span class="hljs-keyword">let</span> str1 = someBool ? <span class="hljs-string">'yes'</span> : <span
+                                class="hljs-string">'no'</span>;
+
+<span class="hljs-comment">// 条件声明</span>
+<span class="hljs-keyword">let</span> str2;
+<span class="hljs-keyword">if</span> (someBool) {
+  str2 = <span class="hljs-string">'yes'</span>;
+} <span class="hljs-keyword">else</span> {
+  str2 = <span class="hljs-string">'no'</span>;
+}</code></pre>
+                    <p>特别是在函数式语言中，一切都是表达式。 <a href="https://github.com/tc39/proposal-do-expressions"
+                                              rel="nofollow noreferrer" target="_blank">Do-expressions</a>
+                        允许你在所有表达式上下文中使用语句：</p>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="let str3 = do {
+  if (someBool) {
+    'yes'
+  } else {
+    'no'
+  }
+};" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="javascript hljs"><code class="js"><span class="hljs-keyword">let</span> str3 = <span
+                            class="hljs-keyword">do</span> {
+  <span class="hljs-keyword">if</span> (someBool) {
+    <span class="hljs-string">'yes'</span>
+  } <span class="hljs-keyword">else</span> {
+    <span class="hljs-string">'no'</span>
+  }
+};</code></pre>
+                    <p>下面的代码是一个更加现实的例子。如果没有 do-expression，你需要一个立即调用的箭头函数来隐藏范围内的变量 <code>result</code> ：</p>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="const func = (() => {
+  let result; // cache
+  return () => {
+    if (result === undefined) {
+      result = someComputation();
+    }
+    return result;
+  }
+})();" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="javascript hljs"><code class="js"><span class="hljs-keyword">const</span> func = <span
+                            class="hljs-function">(<span class="hljs-params">(</span>) =&gt;</span> {
+  <span class="hljs-keyword">let</span> result; <span class="hljs-comment">// cache</span>
+  <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+    <span class="hljs-keyword">if</span> (result === <span class="hljs-literal">undefined</span>) {
+      result = someComputation();
+    }
+    <span class="hljs-keyword">return</span> result;
+  }
+})();</code></pre>
+                    <p>使用 do-expression，你可以更优雅地编写这段代码：</p>
+                    <div class="widget-codetool" style="display: none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="const func = do {
+  let result;
+  () => {
+    if (result === undefined) {
+      result = someComputation();
+    }
+    return result;
+  };
+};
+" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="javascript hljs"><code class="js"><span class="hljs-keyword">const</span> func = <span
+                            class="hljs-keyword">do</span> {
+  <span class="hljs-keyword">let</span> result;
+  <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+    <span class="hljs-keyword">if</span> (result === <span class="hljs-literal">undefined</span>) {
+      result = someComputation();
+    }
+    <span class="hljs-keyword">return</span> result;
+  };
+};
+</code></pre>
+                    <h3 id="categoryHeading8">2.2 匹配：解构 <code>switch</code>
+                    </h3>
+                    <p>JavaScript 使直接使用对象变得容易。但是根据对象的结构，没有内置的切换 case 分支的方法。看起来是这样的（来自提案的例子）：</p>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="const resource = await fetch(jsonService);
+case (resource) {
+  when {status: 200, headers: {'Content-Length': s}} -> {
+    console.log(`size is ${s}`);
+  }
+  when {status: 404} -> {
+    console.log('JSON not found');
+  }
+  when {status} if (status >= 400) -> {
+    throw new RequestError(res);
+  }
+}" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="javascript hljs"><code class="js"><span
+                            class="hljs-keyword">const</span> resource = <span class="hljs-keyword">await</span> fetch(jsonService);
+<span class="hljs-keyword">case</span> (resource) {
+  when {<span class="hljs-attr">status</span>: <span class="hljs-number">200</span>, <span
+                                class="hljs-attr">headers</span>: {<span class="hljs-string">'Content-Length'</span>: s}} -&gt; {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`size is <span
+                                class="hljs-subst">${s}</span>`</span>);
+  }
+  when {<span class="hljs-attr">status</span>: <span class="hljs-number">404</span>} -&gt; {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'JSON not found'</span>);
+  }
+  when {status} <span class="hljs-keyword">if</span> (status &gt;= <span class="hljs-number">400</span>) -&gt; {
+    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> RequestError(res);
+  }
+}</code></pre>
+                    <p>正如你所看到的那样，新的 <code>case</code> 语句在某些方面类似于 <code>switch</code>，不过它使用解构来挑选分支。当人们使用嵌套数据结构（例如在编译器中）时，这种功能非常有用。
+                        <a href="https://github.com/tc39/proposal-pattern-matching" rel="nofollow noreferrer"
+                           target="_blank">模式匹配提案</a>目前处于第1阶段。</p>
+                    <h3 id="categoryHeading9">2.3 管道操作</h3>
+                    <p>管道操作目前有<a href="https://github.com/tc39/proposal-pipeline-operator" rel="nofollow noreferrer"
+                                 target="_blank">两个竞争提案</a> 。在本文，我们研究其中的 <em>智能管道</em>（另一个提议被称为 <em>F# Pipelines</em>）。
+                    </p>
+                    <p>管道操作的基本思想如下。请考虑代码中的嵌套函数调用。</p>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="const y = h(g(f(x)));" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="javascript hljs"><code class="js" style="word-break: break-word; white-space: initial;"><span
+                            class="hljs-keyword">const</span> y = h(g(f(x)));</code></pre>
+                    <p>但是，这种表示方法通常不能体现我们对计算步骤的看法。在直觉上，我们将它们描述为：</p>
+                    <ul>
+                        <li>从值 <code>x</code> 开始。</li>
+                        <li>然后把 <code>f()</code> 作用在 <code>x</code> 上。</li>
+                        <li>然后将 <code>g()</code> 作用于结果。</li>
+                        <li>然后将 <code>h()</code> 应用于结果。</li>
+                        <li>最后将结果赋值给 <code>y</code>。</li>
+                    </ul>
+                    <p>管道运算符能让我们更好地表达这种直觉：</p>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="const y = x |> f |> g |> h;" title=""
+                                  data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="javascript hljs"><code class="js" style="word-break: break-word; white-space: initial;"><span
+                            class="hljs-keyword">const</span> y = x |&gt; f |&gt; g |&gt; h;</code></pre>
+                    <p>换句话说，以下两个表达式是等价的。</p>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="f(123)
+123 |> f" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="javascript hljs"><code class="js">f(<span class="hljs-number">123</span>)
+<span class="hljs-number">123</span> |&gt; f</code></pre>
+                    <p>另外，管道运算符支持<em>部分应用程序</em>（类似函数的 <code>.bind()</code> 方法）：以下两个表达式是等价的。</p>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="123 |> f(#)
+123 |> (x => f(x))" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="javascript hljs"><code class="js"><span class="hljs-number">123</span> |&gt; f(#)
+<span class="hljs-number">123</span> |&gt; (<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> f(x))</code></pre>
+                    <p>使用管道运算符一个最大的好处是，你可以像使用方法一样使用函数——而无需更改任何原型：</p>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="import {map} from 'array-tools';
+const result = arr |> map(#, x => x * 2);" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="javascript hljs"><code class="js"><span class="hljs-keyword">import</span> {map} <span
+                            class="hljs-keyword">from</span> <span class="hljs-string">'array-tools'</span>;
+<span class="hljs-keyword">const</span> result = arr |&gt; map(#, x =&gt; x * <span
+                                class="hljs-number">2</span>);</code></pre>
+                    <p>最后，让我们看一个长一点的例子（取自提案并稍作编辑）：</p>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="promise
+|> await #
+|> # || throw new TypeError(
+  `Invalid value from ${promise}`)
+|> capitalize // function call
+|> # + '!'
+|> new User.Message(#)
+|> await stream.write(#)
+|> console.log // method call
+;" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="javascript hljs"><code class="js">promise
+|&gt; <span class="hljs-keyword">await</span> #
+|&gt; # || <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">TypeError</span>(
+  <span class="hljs-string">`Invalid value from <span class="hljs-subst">${promise}</span>`</span>)
+|&gt; capitalize <span class="hljs-comment">// function call</span>
+|&gt; # + <span class="hljs-string">'!'</span>
+|&gt; <span class="hljs-keyword">new</span> User.Message(#)
+|&gt; <span class="hljs-keyword">await</span> stream.write(#)
+|&gt; <span class="hljs-built_in">console</span>.log <span class="hljs-comment">// method call</span>
+;</code></pre>
+                    <h2 id="categoryHeading10">3 并发</h2>
+                    <p>一直以来 JavaScript 对并发性的支持很有限。并发进程的事实标准是 Worker API，可以在 <a
+                            href="https://caniuse.com/#feat=webworkers" rel="nofollow noreferrer" target="_blank">web
+                        browsers</a> 和 <a href="https://nodejs.org/dist/latest-v11.x/docs/api/worker_threads.html"
+                                          rel="nofollow noreferrer" target="_blank">Node.js</a> （在 v11.7 及更高版本中没有标记）中找到。
+                    </p>
+                    <p>在Node.js中的使用方法它如下所示：</p>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="const {
+  Worker, isMainThread, parentPort, workerData
+} = require('worker_threads');
+
+if (isMainThread) {
+  const worker = new Worker(__filename, {
+    workerData: 'the-data.json'
+  });
+  worker.on('message', result => console.log(result));
+  worker.on('error', err => console.error(err));
+  worker.on('exit', code => {
+    if (code !== 0) {
+      console.error('ERROR: ' + code);
+    }
+  });
+} else {
+  const {readFileSync} = require('fs');
+  const fileName = workerData;
+  const text = readFileSync(fileName, {encoding: 'utf8'});
+  const json = JSON.parse(text);
+  parentPort.postMessage(json);
+}" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="javascript hljs"><code class="js"><span class="hljs-keyword">const</span> {
+  Worker, isMainThread, parentPort, workerData
+} = <span class="hljs-built_in">require</span>(<span class="hljs-string">'worker_threads'</span>);
+
+<span class="hljs-keyword">if</span> (isMainThread) {
+  <span class="hljs-keyword">const</span> worker = <span class="hljs-keyword">new</span> Worker(__filename, {
+    <span class="hljs-attr">workerData</span>: <span class="hljs-string">'the-data.json'</span>
+  });
+  worker.on(<span class="hljs-string">'message'</span>, result =&gt; <span class="hljs-built_in">console</span>.log(result));
+  worker.on(<span class="hljs-string">'error'</span>, err =&gt; <span class="hljs-built_in">console</span>.error(err));
+  worker.on(<span class="hljs-string">'exit'</span>, code =&gt; {
+    <span class="hljs-keyword">if</span> (code !== <span class="hljs-number">0</span>) {
+      <span class="hljs-built_in">console</span>.error(<span class="hljs-string">'ERROR: '</span> + code);
+    }
+  });
+} <span class="hljs-keyword">else</span> {
+  <span class="hljs-keyword">const</span> {readFileSync} = <span class="hljs-built_in">require</span>(<span
+                                class="hljs-string">'fs'</span>);
+  <span class="hljs-keyword">const</span> fileName = workerData;
+  <span class="hljs-keyword">const</span> text = readFileSync(fileName, {<span class="hljs-attr">encoding</span>: <span
+                                class="hljs-string">'utf8'</span>});
+  <span class="hljs-keyword">const</span> json = <span class="hljs-built_in">JSON</span>.parse(text);
+  parentPort.postMessage(json);
+}</code></pre>
+                    <p>唉，相对来说 Workers 是重量级的 —— 每个都有自己的 realm（全局变量等）。我想在未来看到一个更加轻量级的构造。</p>
+                    <h2 id="categoryHeading11">4. 标准库</h2>
+                    <p>JavaScript 仍然明显落后于其他语言的一个领域是它的标准库。当然保持最小化是有意义的，因为外部库更容易进化和适应。但是有一些核心功能也是有必要的。</p>
+                    <h3 id="categoryHeading12">4.1 用模块替代命名空间对象</h3>
+                    <p>JavaScript
+                        标准库是在其语言具有模块之前创建的。因此函数被放在命名空间对象中，例如<code>Object</code>，<code>Reflect</code>，<code>Math</code>和<code>JSON</code>：
+                    </p>
+                    <ul>
+                        <li><code>Object.keys()</code></li>
+                        <li><code>Reflect.ownKeys()</code></li>
+                        <li><code>Math.sign()</code></li>
+                        <li><code>JSON.parse()</code></li>
+                    </ul>
+                    <p>如果将这个功能放在模块中会更好。它必须通过特殊的URL访问，例如使用伪协议 <code>std</code>：</p>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="// Old:
+assert.deepEqual(
+  Object.keys({a: 1, b: 2}),
+  ['a', 'b']);
+
+// New:
+import {keys} from 'std:object';
+assert.deepEqual(
+  keys({a: 1, b: 2}),
+  ['a', 'b']);" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="javascript hljs"><code class="js"><span class="hljs-comment">// Old:</span>
+assert.deepEqual(
+  <span class="hljs-built_in">Object</span>.keys({<span class="hljs-attr">a</span>: <span class="hljs-number">1</span>, <span
+                                class="hljs-attr">b</span>: <span class="hljs-number">2</span>}),
+  [<span class="hljs-string">'a'</span>, <span class="hljs-string">'b'</span>]);
+
+<span class="hljs-comment">// New:</span>
+<span class="hljs-keyword">import</span> {keys} <span class="hljs-keyword">from</span> <span class="hljs-string">'std:object'</span>;
+assert.deepEqual(
+  keys({<span class="hljs-attr">a</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">b</span>: <span
+                                class="hljs-number">2</span>}),
+  [<span class="hljs-string">'a'</span>, <span class="hljs-string">'b'</span>]);</code></pre>
+                    <p>好处是：</p>
+                    <ul>
+                        <li>JavaScript 将变得更加模块化（这可以加快启动时间并减少内存消耗）。</li>
+                        <li>调用导入的函数比调用存储在对象中的函数更快。</li>
+                    </ul>
+                    <h3 id="categoryHeading13">4.2 可迭代工具 (sync 与 async)</h3>
+                    <p><a href="http://exploringjs.com/impatient-js/ch_sync-iteration-use.html"
+                          rel="nofollow noreferrer" target="_blank">迭代</a> 的好处包括按需计算和支持许多数据源。但是目前 JavaScript
+                        只提供了很少的工具来处理 iterables。例如，如果要 过滤、映射或消除重复，则必须将其转换为数组：</p>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="const iterable = new Set([-1, 0, -2, 3]);
+const filteredArray = [...iterable].filter(x => x >= 0);
+assert.deepEqual(filteredArray, [0, 3]);" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="javascript hljs"><code class="js"><span
+                            class="hljs-keyword">const</span> iterable = <span class="hljs-keyword">new</span> <span
+                            class="hljs-built_in">Set</span>([<span class="hljs-number">-1</span>, <span
+                            class="hljs-number">0</span>, <span class="hljs-number">-2</span>, <span
+                            class="hljs-number">3</span>]);
+<span class="hljs-keyword">const</span> filteredArray = [...iterable].filter(<span class="hljs-function"><span
+                                class="hljs-params">x</span> =&gt;</span> x &gt;= <span class="hljs-number">0</span>);
+assert.deepEqual(filteredArray, [<span class="hljs-number">0</span>, <span class="hljs-number">3</span>]);</code></pre>
+                    <p>如果 JavaScript 具有可迭代的工具函数，你可以直接过滤迭代：</p>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="const filteredIterable = filter(iterable, x => x >= 0);
+assert.deepEqual(
+  // We only convert the iterable to an Array, so we can
+  // check what’s in it:
+  [...filteredIterable], [0, 3]);" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="javascript hljs"><code class="js"><span class="hljs-keyword">const</span> filteredIterable = filter(iterable, x =&gt; x &gt;= <span
+                            class="hljs-number">0</span>);
+assert.deepEqual(
+  <span class="hljs-comment">// We only convert the iterable to an Array, so we can</span>
+  <span class="hljs-comment">// check what’s in it:</span>
+  [...filteredIterable], [<span class="hljs-number">0</span>, <span class="hljs-number">3</span>]);</code></pre>
+                    <p>以下是迭代工具函数的一些示例：</p>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="// Count elements in an iterable
+assert.equal(count(iterable), 4);
+
+// Create an iterable over a part of an existing iterable
+assert.deepEqual(
+  [...slice(iterable, 2)],
+  [-1, 0]);
+
+// Number the elements of an iterable
+// (producing another – possibly infinite – iterable)
+for (const [i,x] of zip(range(0), iterable)) {
+  console.log(i, x);
+}
+// Output:
+// 0, -1
+// 1, 0
+// 2, -2
+// 3, 3" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="javascript hljs"><code class="js"><span class="hljs-comment">// Count elements in an iterable</span>
+assert.equal(count(iterable), <span class="hljs-number">4</span>);
+
+<span class="hljs-comment">// Create an iterable over a part of an existing iterable</span>
+assert.deepEqual(
+  [...slice(iterable, <span class="hljs-number">2</span>)],
+  [<span class="hljs-number">-1</span>, <span class="hljs-number">0</span>]);
+
+<span class="hljs-comment">// Number the elements of an iterable</span>
+<span class="hljs-comment">// (producing another – possibly infinite – iterable)</span>
+<span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> [i,x] <span
+                                class="hljs-keyword">of</span> zip(range(<span class="hljs-number">0</span>), iterable)) {
+  <span class="hljs-built_in">console</span>.log(i, x);
+}
+<span class="hljs-comment">// Output:</span>
+<span class="hljs-comment">// 0, -1</span>
+<span class="hljs-comment">// 1, 0</span>
+<span class="hljs-comment">// 2, -2</span>
+<span class="hljs-comment">// 3, 3</span></code></pre>
+                    <p>笔记：</p>
+                    <ul>
+                        <li>有关迭代器的工具函数示例，请参阅 Python 的 <a href="https://docs.python.org/3/library/itertools.html"
+                                                         rel="nofollow noreferrer" target="_blank">itertools</a> （<a
+                                href="https://docs.python.org/3/library/itertools.html" rel="nofollow noreferrer"
+                                target="_blank">https://docs.python.org/3/lib...</a>）。
+                        </li>
+                        <li>对于 JavaScript，迭代的每个工具函数应该有两个版本：一个用于同步迭代，一个用于异步迭代。</li>
+                    </ul>
+                    <h3 id="categoryHeading14">4.3 不可变数据</h3>
+                    <p>很高兴能看到对数据的非破坏性转换有更多的支持。两个相关的库是：</p>
+                    <ul>
+                        <li>
+                            <a href="https://github.com/mweststrate/immer" rel="nofollow noreferrer" target="_blank">Immer</a>
+                            相对轻量，适用于普通对象和数组。
+                        </li>
+                        <li>
+                            <a href="https://github.com/facebook/immutable-js/" rel="nofollow noreferrer"
+                               target="_blank">Immutable.js</a> 更强大，更重量级，并附带自己的数据结构。
+                        </li>
+                    </ul>
+                    <h3 id="categoryHeading15">4.4 更好地支持日期和时间</h3>
+                    <p>JavaScript 对日期和时间的内置支持有许多奇怪的地方。这就是为什么目前建议用库来完成除了最基本任务之外的其它所有工作。</p>
+                    <p>值得庆幸的是 <a href="https://github.com/tc39/proposal-temporal" rel="nofollow noreferrer"
+                                 target="_blank"><code>temporal</code></a> 是一个更好的时间 API：</p>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="const dateTime = new CivilDateTime(2000, 12, 31, 23, 59);
+const instantInChicago = dateTime.withZone('America/Chicago');" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="javascript hljs"><code class="js"><span
+                            class="hljs-keyword">const</span> dateTime = <span class="hljs-keyword">new</span> CivilDateTime(<span
+                            class="hljs-number">2000</span>, <span class="hljs-number">12</span>, <span
+                            class="hljs-number">31</span>, <span class="hljs-number">23</span>, <span
+                            class="hljs-number">59</span>);
+<span class="hljs-keyword">const</span> instantInChicago = dateTime.withZone(<span
+                                class="hljs-string">'America/Chicago'</span>);</code></pre>
+                    <h2 id="categoryHeading16">5. 可能不需要的功能</h2>
+                    <h3 id="categoryHeading17">5.1 optional chaining 的优缺点</h3>
+                    <p>一个相对流行的提议功能是 <a href="https://github.com/tc39/proposal-optional-chaining"
+                                       rel="nofollow noreferrer" target="_blank">optional chaining</a>。以下两个表达式是等效的。</p>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="obj?.prop
+(obj === undefined || obj === null) ? undefined : obj.prop" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="javascript hljs"><code class="js">obj?.prop
+(obj === <span class="hljs-literal">undefined</span> || obj === <span class="hljs-literal">null</span>) ? <span
+                                class="hljs-literal">undefined</span> : obj.prop</code></pre>
+                    <p>此功能对于属性链特别方便：</p>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="obj?.foo?.bar?.baz" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="javascript hljs"><code class="js" style="word-break: break-word; white-space: initial;">obj?.foo?.bar?.baz</code></pre>
+                    <p>但是，仍然存在缺点：</p>
+                    <ul>
+                        <li>深层嵌套的结构更难管理。</li>
+                        <li>由于在访问数据时过于宽容，隐藏了以后可能会出现的问题，更难以调试。</li>
+                    </ul>
+                    <p>optional chaining 的替代方法是在单个位置提取一次信息：</p>
+                    <ul>
+                        <li>你可以编写一个提取数据的辅助函数。</li>
+                        <li>或者你可以编写一个函数，使其输入是深层嵌套数据，但是输出更简单、标准化的数据。</li>
+                    </ul>
+                    <p>无论采用哪种方法，都可以执行检查并在出现问题时尽早抛出异常。</p>
+                    <p>进一步阅读：</p>
+                    <ul>
+                        <li>“<a href="https://medium.com/@vcarl/overly-defensive-programming-e7a1b3d234c2"
+                                rel="nofollow noreferrer" target="_blank">Overly defensive programming</a>” by <a
+                                href="https://twitter.com/vcarl_" rel="nofollow noreferrer" target="_blank">Carl
+                            Vitullo</a>
+                        </li>
+                        <li>
+                            <a href="https://twitter.com/housecor/status/1088419498846244864" rel="nofollow noreferrer"
+                               target="_blank">Thread on Twitter</a> by <a href="https://twitter.com/housecor"
+                                                                           rel="nofollow noreferrer" target="_blank">Cory
+                            House</a>
+                        </li>
+                    </ul>
+                    <h3 id="categoryHeading18">5.2 我们需要运算符重载吗？</h3>
+                    <p>目前正在为 <a href="https://github.com/littledan/proposal-operator-overloading/"
+                                rel="nofollow noreferrer" target="_blank">运算符重载 </a>进行早期工作，但是 infix 函数可能就足够了（目前还没有提案）：
+                    </p>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="import {BigDecimal, plus} from 'big-decimal';
+const bd1 = new BigDecimal('0.1');
+const bd2 = new BigDecimal('0.2');
+const bd3 = bd1 @plus bd2; // plus(bd1, bd2)" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="javascript hljs"><code class="js"><span class="hljs-keyword">import</span> {BigDecimal, plus} <span
+                            class="hljs-keyword">from</span> <span class="hljs-string">'big-decimal'</span>;
+<span class="hljs-keyword">const</span> bd1 = <span class="hljs-keyword">new</span> BigDecimal(<span
+                                class="hljs-string">'0.1'</span>);
+<span class="hljs-keyword">const</span> bd2 = <span class="hljs-keyword">new</span> BigDecimal(<span
+                                class="hljs-string">'0.2'</span>);
+<span class="hljs-keyword">const</span> bd3 = bd1 @plus bd2; <span class="hljs-comment">// plus(bd1, bd2)</span></code></pre>
+                    <p>infix 函数的好处是：</p>
+                    <ul>
+                        <li>你可以创建 JavaScript 以外的运算符。</li>
+                        <li>与普通函数相比，嵌套表达式的可读性仍然很好。</li>
+                    </ul>
+                    <p>下面是嵌套表达式的例子：</p>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="a @plus b @minus c @times d
+times(minus(plus(a, b), c), d)" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="javascript hljs"><code class="js">a @plus b @minus c @times d
+times(minus(plus(a, b), c), d)</code></pre>
+                    <p>有趣的是，管道操作符还有助于提高可读性：</p>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="plus(a, b)
+  |> minus(#, c)
+  |> times(#, d)" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="javascript hljs"><code class="js">plus(a, b)
+  |&gt; minus(#, c)
+  |&gt; times(#, d)</code></pre>
+                    <h2 id="categoryHeading19">6. 各种小东西</h2>
+                    <p>以下是我偶尔会遗漏的一些东西，但我认为不如前面提到的那些重要：</p>
+                    <ul>
+                        <li>链式异常：使你能够捕获错误，能够包含其他信息并再次抛出。</li>
+                    </ul>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="  new ChainedError(msg, origError)" title=""
+                                  data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="javascript hljs"><code class="js" style="word-break: break-word; white-space: initial;">  <span
+                            class="hljs-keyword">new</span> ChainedError(msg, origError)</code></pre>
+                    <ul>
+                        <li>
+                            <a href="http://2ality.com/2017/07/re-template-tag.html" rel="nofollow noreferrer"
+                               target="_blank">可组合的正则表达式</a>：
+                        </li>
+                    </ul>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="  re`/^${RE_YEAR}-${RE_MONTH}-${RE_DAY}$/u`" title=""
+                                  data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="javascript hljs"><code class="JS" style="word-break: break-word; white-space: initial;">  re<span
+                            class="hljs-string">`/^<span class="hljs-subst">${RE_YEAR}</span>-<span class="hljs-subst">${RE_MONTH}</span>-<span
+                            class="hljs-subst">${RE_DAY}</span>$/u`</span></code></pre>
+                    <ul>
+                        <li>正则表达式的转义文本（对于<code>.replace（）</code>很重要）：</li>
+                    </ul>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="> const re = new RegExp(RegExp.escape(':-)'), 'ug');
+> ':-) :-) :-)'.replace(re, '🙂')
+'🙂 🙂 🙂'" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="hljs typescript"><code>&gt; <span class="hljs-keyword">const</span> re = <span
+                            class="hljs-keyword">new</span> <span class="hljs-built_in">RegExp</span>(<span
+                            class="hljs-built_in">RegExp</span>.escape(<span class="hljs-string">':-)'</span>), <span
+                            class="hljs-string">'ug'</span>);
+&gt; <span class="hljs-string">':-) :-) :-)'</span>.replace(re, <span class="hljs-string">'🙂'</span>)
+<span class="hljs-string">'🙂 🙂 🙂'</span></code></pre>
+                    <ul>
+                        <li>支持负索引的 <code>Array.prototype.get（）</code>：</li>
+                    </ul>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="  > ['a', 'b'].get(-1)
+  'b'" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="hljs kotlin"><code class="repl">  &gt; [<span class="hljs-string">'a'</span>, <span
+                            class="hljs-string">'b'</span>].<span class="hljs-keyword">get</span>(-<span
+                            class="hljs-number">1</span>)
+  <span class="hljs-string">'b'</span></code></pre>
+                    <ul>
+                        <li>
+                            <a href="https://github.com/zkat/proposal-as-patterns" rel="nofollow noreferrer"
+                               target="_blank">匹配和解构的模式</a>（KatMarchán 的提案）：
+                        </li>
+                    </ul>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="  function f(...[x, y] as args) {
+    if (args.length !== 2) {
+      throw new Error();
+    }
+    // ···
+  }" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="javascript hljs"><code class="js">  <span class="hljs-function"><span
+                            class="hljs-keyword">function</span> <span class="hljs-title">f</span>(<span
+                            class="hljs-params">...[x, y] as args</span>) </span>{
+    <span class="hljs-keyword">if</span> (args.length !== <span class="hljs-number">2</span>) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span
+                                class="hljs-built_in">Error</span>();
+    }
+    <span class="hljs-comment">// ···</span>
+  }</code></pre>
+                    <ul>
+                        <li>检查对象的深度相等性（有可能：可选地使用谓词进行参数化，以支持自定义数据结构）：</li>
+                    </ul>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="  assert.equal(
+    {foo: ['a', 'b']} === {foo: ['a', 'b']},
+    false);
+  assert.equal(
+    deepEqual({foo: ['a', 'b']}, {foo: ['a', 'b']}),
+    true);" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="javascript hljs"><code class="js">  assert.equal(
+    {<span class="hljs-attr">foo</span>: [<span class="hljs-string">'a'</span>, <span class="hljs-string">'b'</span>]} === {<span
+                                class="hljs-attr">foo</span>: [<span class="hljs-string">'a'</span>, <span
+                                class="hljs-string">'b'</span>]},
+    <span class="hljs-literal">false</span>);
+  assert.equal(
+    deepEqual({<span class="hljs-attr">foo</span>: [<span class="hljs-string">'a'</span>, <span
+                                class="hljs-string">'b'</span>]}, {<span class="hljs-attr">foo</span>: [<span
+                                class="hljs-string">'a'</span>, <span class="hljs-string">'b'</span>]}),
+    <span class="hljs-literal">true</span>);</code></pre>
+                    <ul>
+                        <li>枚举：向 JavaScript 添加枚举的一个好处是可以缩小与 TypeScript 的差距。目前有两份提案草案（尚未处于正式阶段）。 <a
+                                href="https://github.com/rwaldron/proposal-enum-definitions" rel="nofollow noreferrer"
+                                target="_blank">一个是Rick Waldron</a>，<a href="https://github.com/rbuckton/proposal-enum"
+                                                                       rel="nofollow noreferrer" target="_blank">另一个是Ron
+                            Buckton</a>。在两个提案中，最简单的语法如下所示：
+                        </li>
+                    </ul>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="  enum WeekendDay {
+    Saturday, Sunday
+  }
+  const day = WeekendDay.Sunday;" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="javascript hljs"><code class="js">  enum WeekendDay {
+    Saturday, Sunday
+  }
+  <span class="hljs-keyword">const</span> day = WeekendDay.Sunday;</code></pre>
+                    <ul>
+                        <li>
+                            <a href="https://github.com/zkat/proposal-collection-literals" rel="nofollow noreferrer"
+                               target="_blank">Tagged collection literals</a> （由KatMayán提议 - 并撤回）：允许你创建 Map 和 Set，如下所示：
+                        </li>
+                    </ul>
+                    <div class="widget-codetool" style="display:none;">
+                        <div class="widget-codetool--inner">
+                            <span class="selectCode code-tool" data-toggle="tooltip" data-placement="top" title=""
+                                  data-original-title="全选"></span>
+                            <span type="button" class="copyCode code-tool" data-toggle="tooltip" data-placement="top"
+                                  data-clipboard-text="  const myMap = Map!{1: 2, three: 4, [[5]]: 6}
+    // new Map([1,2], ['three',4], [[5],6])
+
+  const mySet = Set!['a', 'b', 'c'];
+    // new Set(['a', 'b', 'c'])" title="" data-original-title="复制"></span>
+                        </div>
+                    </div>
+                    <pre class="javascript hljs"><code class="js">  <span
+                            class="hljs-keyword">const</span> myMap = <span class="hljs-built_in">Map</span>!{<span
+                            class="hljs-number">1</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">three</span>: <span
+                            class="hljs-number">4</span>, [[<span class="hljs-number">5</span>]]: <span
+                            class="hljs-number">6</span>}
+    <span class="hljs-comment">// new Map([1,2], ['three',4], [[5],6])</span>
+
+  <span class="hljs-keyword">const</span> mySet = <span class="hljs-built_in">Set</span>![<span
+                                class="hljs-string">'a'</span>, <span class="hljs-string">'b'</span>, <span
+                                class="hljs-string">'c'</span>];
+    <span class="hljs-comment">// new Set(['a', 'b', 'c'])</span></code></pre>
+                    <h2 id="categoryHeading20">7. FAQ：未来的JavaScript</h2>
+                    <h3 id="categoryHeading21">7.1 JavaScript 会不会支持静态类型？</h3>
+                    <p>不会很快！当前开发时的静态类型（通过 TypeScript 或 Flow）和运行时的纯 JavaScript 之间的分离效果很好。所以没有什么合理的理由改变它。</p>
+                    <h3 id="categoryHeading22">7.2 为什么我们不能通过删除怪异和过时的功能来清理 JavaScript？</h3>
+                    <p>Web 的一个关键要求是：永远不要破坏向后兼容性：</p>
+                    <ul>
+                        <li>缺点是语言会有许多遗留功能。</li>
+                        <li>但好处大于缺点：大型代码库仍然是同质的，迁移到新版本很简单，引擎仍然较小（不需要支持多个版本）等等</li>
+                    </ul>
+                    <p>通过引入当前功能的更好版本，仍然可以修复一些错误。</p>
+                    <p>有关此主题的更多信息，请参阅“<a
+                            href="http://exploringjs.com/impatient-js/ch_history.html#backward-compatibility"
+                            rel="nofollow noreferrer" target="_blank">针对不耐烦的程序员的 JavaScript </a>”。</p>
+                    <h2 id="categoryHeading23">8. 关于语言设计的思考</h2>
+                    <p>作为一名语言设计师，无论你做什么，都会使一些人开心，而另一些人会伤心。因此，设计未来 JavaScript 功能的主要挑战不是让每个人都满意，而是让语言尽可能保持一致。</p>
+                    <p>
+                        但是对于“一致”的含义，也存在分歧。因此，我们可以做到的最好的事情就是建立一致的“风格”，由一小群人（最多三人）构思和执行。不过这并不排除他们接受许多其他人的建议和帮助，但他们应该设定一个基调。</p>
+                    <p>引用 <a href="https://en.wikiquote.org/wiki/Fred_Brooks#No_Silver_Bullet_(1986"
+                             rel="nofollow noreferrer" target="_blank">Fred Brooks</a>):</p>
+                    <blockquote>稍微回顾一下，尽管许多优秀实用的软件系统都是由委员会设计的，并且是作为一些项目的一部分而构建的，但是从本质上说，那些拥有大量激情粉丝的软件就是<strong>一个或几个设计思想的产品</strong>，——致伟大的设计师。
+                    </blockquote>
+                    <p>这些核心设计师的一个重要职责是对功能说“不”，以防止 JavaScript 变得太大。</p>
+                    <p>他们还需要一个强大的支持系统，因为语言设计者往往会遭到严重的滥用（因为人们关心并且不喜欢听到“不”）。 <a
+                            href="https://www.theregister.co.uk/2018/07/13/python_creator_guido_van_rossum_quits/"
+                            rel="nofollow noreferrer" target="_blank">最近的一个例子</a>是 Guido van Rossum 辞去了首席 Python
+                        语言设计师的工作，因为他受到了虐待。</p>
+                    <h3 id="categoryHeading24">8.1 其他想法</h3>
+                    <p>这些想法可能也有助于设计和见证 JavaScript：</p>
+                    <ul>
+                        <li>创建描述 JavaScript 未来前景的路线图。这样的路线图可以用讲故事的方式并将许多单独的部分连接成一个连贯的整体。我所知的最后一个这样的路线图是 Brendan Eich
+                            的“<a href="https://brendaneich.com/2011/01/harmony-of-my-dreams/" rel="nofollow noreferrer"
+                                 target="_blank">和谐的梦想</a>”。
+                        </li>
+                        <li>记录设计理念。现在，ECMAScript 规范只记录了 <em>怎样</em> 做，而没有 <em>为什么</em> 。举个例子：可枚举性的目的是什么？</li>
+                        <li>规范的解释者。半正式的规范部分几乎已经可执行。如果能够像编程语言一样对待和运行它们会很棒。 （你可能需要一个约定来区分规范代码和非规范辅助函数。）</li>
+                    </ul>
+                    <p><strong>鸣谢：</strong>感谢Daniel Ehrenberg对本博文的反馈！</p>
+                    <hr>
+                    <h4>本文首发微信公众号：jingchengyideng</h4>
+                    <h4>欢迎扫描二维码关注公众号，每天都给你推送新鲜的前端技术文章</h4>
+                    <p><span class="img-wrap"><img data-src="/img/bVRyYe?w=430&amp;h=430"
+                                                   src="/img/bVRyYe?w=430&amp;h=430" alt="欢迎扫描二维码关注公众号，每天都给你推送新鲜的前端技术文章"
+                                                   title="欢迎扫描二维码关注公众号，每天都给你推送新鲜的前端技术文章"
+                                                   style="cursor: pointer; display: inline;"></span></p>
+                    <hr>
+                    <p>欢迎继续阅读本专栏其它高赞文章：</p>
+                    <ul>
+                        <li><a href="https://segmentfault.com/a/1190000018036227">12个令人惊叹的CSS实验项目</a></li>
+                        <li><a href="https://segmentfault.com/a/1190000017949080" target="_blank">世界顶级公司的前端面试都问些什么</a>
+                        </li>
+                        <li><a href="https://segmentfault.com/a/1190000018056228">CSS Flexbox 可视化手册</a></li>
+                        <li><a href="https://segmentfault.com/a/1190000018088062" target="_blank">过节很无聊？还是用 JavaScript
+                            写一个脑力小游戏吧！</a></li>
+                        <li><a href="https://segmentfault.com/a/1190000018141328">从设计者的角度看 React</a></li>
+                        <li><a href="https://segmentfault.com/a/1190000018113832" target="_blank">CSS粘性定位是怎样工作的</a></li>
+                        <li><a href="https://segmentfault.com/a/1190000017977613">一步步教你用HTML5 SVG实现动画效果</a></li>
+                        <li><a href="https://segmentfault.com/a/1190000018224157"
+                               target="_blank">程序员30岁前月薪达不到30K，该何去何从</a></li>
+                        <li><a href="https://segmentfault.com/a/1190000017982432">第三方CSS安全吗？</a></li>
+                        <li><a href="https://segmentfault.com/a/1190000018084870" target="_blank">谈谈super(props)
+                            的重要性</a></li>
+                    </ul>
+                    <hr>
+
+                </div>
+            </div>
+            <div class="post-comments">
+                <form>
+                    <div class="form-group">
+                        <textarea class="form-control"></textarea>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-3 blog-side">
+            <div class="post-category">
+                <div class="post-category-header">
+                    Category
+                </div>
+                <div class="post-category-body">
+                    <ul>
+                        <li class=""><a :ref="'categoryHeading0'" href="#" @click.prevent="scrollToCategoryHeading('categoryHeading0', $event)">1. 值</a></li>
+                        <li style="list-style:none;">
+                            <ul>
+                                <li class=""><a :ref="'categoryHeading1'" href="#" @click.prevent="scrollToCategoryHeading('categoryHeading1', $event)">1.1 按值比较对象</a></li>
+                                <li class=""><a :ref="'categoryHeading2'" href="#" @click.prevent="scrollToCategoryHeading('categoryHeading2', $event)">1.2 将对象放入数据结构中</a></li>
+                                <li class=""><a :ref="'categoryHeading3'" href="#" @click.prevent="scrollToCategoryHeading('categoryHeading3', $event)">1.3 大整数</a></li>
+                                <li class=""><a :ref="'categoryHeading4'" href="#" @click.prevent="scrollToCategoryHeading('categoryHeading4', $event)">1.4 小数计算</a></li>
+                                <li class=""><a :ref="'categoryHeading5'" href="#" @click.prevent="scrollToCategoryHeading('categoryHeading5', $event)">1.5 对值进行分类</a></li>
+                            </ul>
+                        </li>
+                        <li class=""><a :ref="'categoryHeading6'" href="#" @click.prevent="scrollToCategoryHeading('categoryHeading6', $event)">2. 函数式编程</a></li>
+                        <li style="list-style:none;">
+                            <ul>
+                                <li class=""><a :ref="'categoryHeading7'" href="#" @click.prevent="scrollToCategoryHeading('categoryHeading7', $event)">2.1 更多表达式</a></li>
+                                <li class=""><a :ref="'categoryHeading8'" href="#" @click.prevent="scrollToCategoryHeading('categoryHeading8', $event)">2.2 匹配：解构 switch</a></li>
+                                <li class=""><a :ref="'categoryHeading9'" href="#" @click.prevent="scrollToCategoryHeading('categoryHeading9', $event)">2.3 管道操作</a></li>
+                            </ul>
+                        </li>
+                        <li class=""><a :ref="'categoryHeading10'" href="#" @click.prevent="scrollToCategoryHeading('categoryHeading10', $event)">3 并发</a></li>
+                        <li class=""><a :ref="'categoryHeading11'" href="#" @click.prevent="scrollToCategoryHeading('categoryHeading11', $event)">4. 标准库</a></li>
+                        <li style="list-style:none;">
+                            <ul>
+                                <li class=""><a :ref="'categoryHeading12'" href="#" @click.prevent="scrollToCategoryHeading('categoryHeading12', $event)">4.1 用模块替代命名空间对象</a></li>
+                                <li class=""><a :ref="'categoryHeading13'" href="#" @click.prevent="scrollToCategoryHeading('categoryHeading13', $event)">4.2 可迭代工具 (sync 与 async)</a></li>
+                                <li class=""><a :ref="'categoryHeading14'" href="#" @click.prevent="scrollToCategoryHeading('categoryHeading14', $event)">.3 不可变数据</a></li>
+                                <li class=""><a :ref="'categoryHeading15'" href="#" @click.prevent="scrollToCategoryHeading('categoryHeading15', $event)">4.4 更好地支持日期和时间</a></li>
+                            </ul>
+                        </li>
+                        <li class=""><a :ref="'categoryHeading16'" href="#" @click.prevent="scrollToCategoryHeading('categoryHeading16', $event)">5. 可能不需要的功能</a></li>
+                        <li style="list-style:none;">
+                            <ul>
+                                <li class=""><a :ref="'categoryHeading17'" href="#" @click.prevent="scrollToCategoryHeading('categoryHeading17', $event)">5.1 optional chaining 的优缺点</a></li>
+                                <li class=""><a :ref="'categoryHeading18'" href="#" @click.prevent="scrollToCategoryHeading('categoryHeading18', $event)">5.2 我们需要运算符重载吗？</a></li>
+                            </ul>
+                        </li>
+                        <li class=""><a :ref="'categoryHeading19'" href="#" @click.prevent="scrollToCategoryHeading('categoryHeading19', $event)">6. 各种小东西</a></li>
+                        <li class=""><a :ref="'categoryHeading20'" href="#" @click.prevent="scrollToCategoryHeading('categoryHeading20', $event)">7. FAQ：未来的JavaScript</a></li>
+                        <li style="list-style:none;">
+                            <ul>
+                                <li class=""><a :ref="'categoryHeading21'" href="#" @click.prevent="scrollToCategoryHeading('categoryHeading21', $event)">7.1 JavaScript 会不会支持静态类型？</a></li>
+                                <li class=""><a :ref="'categoryHeading22'" href="#" @click.prevent="scrollToCategoryHeading('categoryHeading22', $event)">7.2 为什么我们不能通过删除怪异和过时的功能来清理
+                                    JavaScript？</a></li>
+                            </ul>
+                        </li>
+                        <li class=""><a :ref="'categoryHeading23'" href="#" @click.prevent="scrollToCategoryHeading('categoryHeading23', $event)">8. 关于语言设计的思考</a></li>
+                        <li style="list-style:none;">
+                            <ul>
+                                <li class=""><a :ref="'categoryHeading24'" href="#" @click.prevent="scrollToCategoryHeading('categoryHeading24', $event)">8.1 其他想法</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    {#    <article id="post-{@ post.id @}" class="tile post-tile">#}
+    {#        <div class="tile-body post-body">#}
+    {#            <div class="post-meta">#}
+    {#                <span class="post-date">#}
+    {#                    <a href="{@ url_for('home.index', archive_date=moment(post.timestamp).format('YYYYMM')) @}"></a>#}
+    {#                </span>#}
+    {#            </div>#}
+    {#            <h3 class="post-title"><a href="{@ url_for('home.post', id=post.id) @}">{@ post.title @}</a></h3>#}
+    {#            <div class="post-meta">#}
+    {#                <span class="post-author"><a href="{@ url_for('home.index') @}">{@ post.author.username @}</a></span>#}
+    {#                {% if post.category %}#}
+    {#                    <span class="post-delimiter">|</span>#}
+    {#                    <span class="post-category"><a href="{@ url_for('home.index', category_id=post.category.id) @}">{@ post.category.name @}</a></span>#}
+    {#                {% endif %}#}
+    {#                {% set tags = post.tags.all() %}#}
+    {#                {% if tags %}#}
+    {#                    <span class="post-delimiter">|</span>#}
+    {#                    {% for tag in tags %}#}
+    {#                        <span class="post-tag">#<a href="{@ url_for('home.index', tag_id=tag.id) @}">{@ tag.name @}</a></span>#}
+    {#                    {% endfor %}#}
+    {#                {% endif %}#}
+    {#            </div>#}
+    {#            <div class="post-meta">#}
+    {#                {% if not current_user.is_anonymous %}#}
+    {#                    <a class="post-do" href="{@ url_for('home.edit_post', id=post.id) @}">edit</a>#}
+    {#                    <a class="post-do" href="{@ url_for('home.delete_post', id=post.id) @}">delete</a>#}
+    {#                {% endif %}#}
+    {#            </div>#}
+    {#        </div>#}
+    {#    </article>#}
+{% endblock %}

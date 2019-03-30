@@ -7,21 +7,19 @@ from config import config
 
 
 def register_blueprints(app):
-    from .blueprints.home import main_bp
+    from .blueprints.home import home_bp
     from .blueprints.auth import auth_bp
     from .blueprints.user import user_bp
-    from .blueprints.api import api_bp
+    from .blueprints.ajax import ajax_bp
     from .blueprints.admin import admin_bp
     from .blueprints.blog import blog_bp
-    from .blueprints.post import post_bp
 
-    app.register_blueprint(main_bp)
+    app.register_blueprint(home_bp)
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(user_bp, url_prefix='/user/<username>')
-    app.register_blueprint(api_bp, url_prefix='/api')
+    app.register_blueprint(ajax_bp, url_prefix='/ajax')
     app.register_blueprint(admin_bp, url_prefix='/admin')
     app.register_blueprint(blog_bp, url_prefix='/blog')
-    app.register_blueprint(post_bp, url_prefix='/post')
 
 
 def register_shell_context(app):

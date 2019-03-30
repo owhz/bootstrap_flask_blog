@@ -43,8 +43,9 @@ class ProductionConfig(Config):
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_ECHO = True
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:root@localhost/blog-dev'
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:root@127.0.0.1/blog-dev'
 
+    SERVER_NAME = 'localhost:5000'
     REDIS_URI = 'redis:@127.0.0.1'
 
 

@@ -46,11 +46,13 @@
   "dependencies": {
     "axios": "^0.18.0",
     "bootstrap": "^4.2.1",
+    "feather-icons": "^4.19.0",
     "hilight": "0.0.1",
     "jquery": "^3.3.1",
     "marked": "^0.6.0",
+    "moment": "^2.24.0",
     "open-iconic": "git+https://github.com/iconic/open-iconic.git",
     "popper.js": "^1.14.6",
-    "vue": "^2.6.2"
+    "smoothscroll-polyfill": "^0.4.3"
   }
 }
